@@ -110,7 +110,7 @@ A aplicação sugere o formato conforme o número de atletas que passaram na pes
 - [ ] **Cabeças de série:** ficam em posições fixas e distribuem-se assim: 1-8, 4-5, 2-7, 3-6 (Artigo 40).
 - [ ] **Isenções:** os cabeças de série são os primeiros a ficar isentos da primeira ronda.
 - [ ] **Restantes atletas:** são sorteados. O sorteio pode ser repetido e mostrado aos treinadores.
-- [ ] **Mesmo clube:** a aplicação tenta evitar que se defrontem na primeira ronda e avisa quando não consegue. Os cabeças de série não entram nesta separação.
+- [ ] **Mesmo clube:** a aplicação tenta evitar que se defrontem no primeiro combate, mesmo depois de uma isenção, e avisa quando não consegue. Os cabeças de série não entram nesta separação.
 - [ ] **Bloqueio:** depois de bloquear o sorteio, só o treinador o pode desbloquear, com confirmação.
 
 ---

@@ -9,6 +9,7 @@
 import { useSQLiteContext, type SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useRef, useState } from 'react';
 
+import { isCategoryDrawLocked } from '@/features/categories';
 import { useReloadableFocusQuery } from '@/hooks/useReloadableFocusQuery';
 import type { TranslationKey } from '@/lib/i18n/pt';
 
@@ -45,8 +46,12 @@ export function useWeighIn(tournamentId: string) {
   );
   const { state, reload } = useReloadableFocusQuery(query);
 
-  /** Runs one action. @returns true if it finished without an error */
-  async function run(action: () => Promise<void>): Promise<boolean> {
+  /**
+   * Runs one action, unless a locked draw would be affected.
+   * @param categoryIds the categories this action changes
+   * @returns true if it finished without an error
+   */
+  async function run(categoryIds: string[], action: () => Promise<void>): Promise<boolean> {
     if (isActionRunning.current) {
       return false;
     }
@@ -55,6 +60,13 @@ export function useWeighIn(tournamentId: string) {
     setErrorKey(null);
     setIsBusy(true);
     try {
+      for (const categoryId of categoryIds) {
+        if (await isCategoryDrawLocked(db, categoryId)) {
+          setErrorKey('draw.lockedMessage');
+          return false;
+        }
+      }
+
       await action();
       return true;
     } catch {
@@ -70,21 +82,23 @@ export function useWeighIn(tournamentId: string) {
   /** Saves a weight. @returns the result, or null if it couldn't be saved */
   async function recordWeight(entry: WeighInEntry, kg: number): Promise<WeightResult | null> {
     const result = evaluateWeight(kg, entry);
-    const wasSaved = await run(() => saveWeight(db, entry.entryId, kg, statusFor(result)));
+    const wasSaved = await run([entry.categoryId], () =>
+      saveWeight(db, entry.entryId, kg, statusFor(result)),
+    );
 
     return wasSaved ? result : null;
   }
 
   function setNoShow(entry: WeighInEntry) {
-    return run(() => markNoShow(db, entry.entryId));
+    return run([entry.categoryId], () => markNoShow(db, entry.entryId));
   }
 
   function clear(entry: WeighInEntry) {
-    return run(() => clearWeighIn(db, entry.entryId));
+    return run([entry.categoryId], () => clearWeighIn(db, entry.entryId));
   }
 
   function moveTo(entry: WeighInEntry, target: WeighInCategory) {
-    return run(async () => {
+    return run([entry.categoryId, target.id], async () => {
       // An athlete with no weight yet simply stays "still to be weighed".
       const status =
         entry.weighedKg === null ? 'registered' : statusFor(evaluateWeight(entry.weighedKg, target));
@@ -96,7 +110,7 @@ export function useWeighIn(tournamentId: string) {
   }
 
   function createGroup(entry: WeighInEntry, label: string) {
-    return run(async () => {
+    return run([entry.categoryId], async () => {
       if (!(await createFreeGroupAndMove(db, tournamentId, entry, label))) {
         setErrorKey('weighIn.groupNameTaken');
       }

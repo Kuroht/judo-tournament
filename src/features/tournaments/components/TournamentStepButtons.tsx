@@ -39,6 +39,10 @@ export function TournamentStepButtons({ tournament }: TournamentStepButtonsProps
         })}
         onPress={() => router.push({ pathname: '/tournament/[id]/weigh-in', params })}
       />
+      <Button
+        label={t('draw.title')}
+        onPress={() => router.push({ pathname: '/tournament/[id]/draw', params })}
+      />
     </>
   );
 }

@@ -8,7 +8,13 @@
  *          WeightInput.tsx
  * =====================================================
  */
-import type { WeighInCategory, WeighInEntry, WeightLimits, WeightResult } from './types';
+import type {
+  EntryStatus,
+  WeighInCategory,
+  WeighInEntry,
+  WeightLimits,
+  WeightResult,
+} from './types';
 
 const MIN_WEIGHT_KG = 5;
 const MAX_WEIGHT_KG = 300;
@@ -66,6 +72,26 @@ export function evaluateWeight(kg: number, limits: WeightLimits): WeightResult {
   }
 
   return 'pass';
+}
+
+/**
+ * Works out pass or fail from the category's current limits. The saved status could
+ * be out of date, because the trainer can edit a category's limits after the weigh-in.
+ * @param status the saved status
+ * @param weighedKg the saved weight, if any
+ * @param limits the category's current limits
+ * @returns the status to use. Only passed and failed can change.
+ */
+export function getCurrentStatus(
+  status: EntryStatus,
+  weighedKg: number | null,
+  limits: WeightLimits,
+): EntryStatus {
+  if (weighedKg === null || (status !== 'passed' && status !== 'failed')) {
+    return status;
+  }
+
+  return evaluateWeight(weighedKg, limits) === 'pass' ? 'passed' : 'failed';
 }
 
 /**

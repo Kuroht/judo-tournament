@@ -3,8 +3,8 @@
  * FILE: categoryQueries.ts
  * PURPOSE: All the SQL for a tournament's categories.
  * USED BY: useCategories.ts, useCategoryForm.ts,
- *          useAddFpjCategories.ts, and tournaments and
- *          weigh-in through index.ts
+ *          useAddFpjCategories.ts, and tournaments,
+ *          registration and weigh-in through index.ts
  * =====================================================
  */
 import type { SQLiteDatabase } from 'expo-sqlite';
@@ -110,6 +110,22 @@ export async function listAgeClasses(db: SQLiteDatabase): Promise<AgeClassOption
 // ---------------------------------------------
 // SECTION: Writing
 // ---------------------------------------------
+
+/**
+ * Checks if a category's draw is locked. While it is, registration, the weigh-in and
+ * the category's own form refuse changes, which would make the published draw wrong.
+ */
+export async function isCategoryDrawLocked(
+  db: SQLiteDatabase,
+  categoryId: string,
+): Promise<boolean> {
+  const row = await db.getFirstAsync(
+    'SELECT id FROM draws WHERE categoryId = ? AND isLocked = 1',
+    [categoryId],
+  );
+
+  return row !== null;
+}
 
 /** Saves a new category. @returns the new category's id */
 export function createCategory(

@@ -10,7 +10,9 @@
 import { useSQLiteContext, type SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useRef, useState } from 'react';
 
+import { isCategoryDrawLocked } from '@/features/categories';
 import { useReloadableFocusQuery } from '@/hooks/useReloadableFocusQuery';
+import type { TranslationKey } from '@/lib/i18n/pt';
 
 import { addEntry, getCategoryRegistration, removeEntry } from '../db/registrationQueries';
 
@@ -20,7 +22,7 @@ import { addEntry, getCategoryRegistration, removeEntry } from '../db/registrati
  */
 export function useCategoryRegistration(categoryId: string) {
   const db = useSQLiteContext();
-  const [hasActionFailed, setHasActionFailed] = useState(false);
+  const [errorKey, setErrorKey] = useState<TranslationKey | null>(null);
   const [isBusy, setIsBusy] = useState(false);
   // A ref changes at once, so a fast second tap can't start a second action.
   const isActionRunning = useRef(false);
@@ -37,12 +39,18 @@ export function useCategoryRegistration(categoryId: string) {
     }
 
     isActionRunning.current = true;
-    setHasActionFailed(false);
+    setErrorKey(null);
     setIsBusy(true);
     try {
+      // A locked draw must keep the same athletes.
+      if (await isCategoryDrawLocked(db, categoryId)) {
+        setErrorKey('draw.lockedMessage');
+        return;
+      }
+
       await action();
     } catch {
-      setHasActionFailed(true);
+      setErrorKey('registration.actionError');
     } finally {
       // Also after a failure, because the screen's data may be why it failed.
       reload();
@@ -59,5 +67,5 @@ export function useCategoryRegistration(categoryId: string) {
     return run(() => removeEntry(db, entryId));
   }
 
-  return { state, hasActionFailed, isBusy, add, remove };
+  return { state, errorKey, isBusy, add, remove };
 }

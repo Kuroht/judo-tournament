@@ -14,6 +14,7 @@ import { Button } from '@/components/Button';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
+import type { TranslationKey } from '@/lib/i18n/pt';
 import { useT } from '@/lib/i18n/useT';
 
 import type { CategoryRegistration, RegisteredAthlete } from '../types';
@@ -23,7 +24,7 @@ type CategoryRegistrationContentProps = {
   tournamentId: string;
   data: CategoryRegistration;
   isBusy: boolean;
-  hasActionFailed: boolean;
+  errorKey: TranslationKey | null;
   onRemove: (entryId: string) => void;
 };
 
@@ -31,7 +32,7 @@ export function CategoryRegistrationContent({
   tournamentId,
   data,
   isBusy,
-  hasActionFailed,
+  errorKey,
   onRemove,
 }: CategoryRegistrationContentProps) {
   const t = useT();
@@ -72,10 +73,8 @@ export function CategoryRegistrationContent({
             />
           )}
         />
-        {hasActionFailed && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">
-            {t('registration.actionError')}
-          </Text>
+        {errorKey !== null && (
+          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">{t(errorKey)}</Text>
         )}
         <Button
           label={t('registration.addAthletes')}

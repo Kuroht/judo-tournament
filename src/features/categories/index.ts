@@ -3,12 +3,13 @@
  * FILE: index.ts
  * PURPOSE: The public API of the categories feature. Other
  *          code imports from here, never from its insides.
- * USED BY: src/app/tournament/[id]/*, the tournaments and
- *          weigh-in features
+ * USED BY: src/app/tournament/[id]/*, the tournaments,
+ *          registration, weigh-in and draw features
  * =====================================================
  */
-export { FREE_GROUP_FORMAT } from './categoryFormats';
+export { CATEGORY_FORMAT_LABELS, FREE_GROUP_FORMAT } from './categoryFormats';
 export { AddFpjCategoriesScreen } from './components/AddFpjCategoriesScreen';
 export { CategoriesScreen } from './components/CategoriesScreen';
 export { CategoryFormScreen } from './components/CategoryFormScreen';
-export { copyCategories, createCategory } from './db/categoryQueries';
+export { copyCategories, createCategory, isCategoryDrawLocked } from './db/categoryQueries';
+export type { CategoryFormat } from './types';

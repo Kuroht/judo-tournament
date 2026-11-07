@@ -15,6 +15,7 @@ import {
   createCategory,
   deleteCategory,
   getCategory,
+  isCategoryDrawLocked,
   updateCategory,
 } from '../db/categoryQueries';
 import type { CategoryFormValues } from '../types';
@@ -104,6 +105,9 @@ export function useCategoryForm(
     try {
       if (categoryId === null) {
         await createCategory(db, tournamentId, result.data);
+      } else if (await isCategoryDrawLocked(db, categoryId)) {
+        setActionError({ key: 'draw.lockedMessage' });
+        return;
       } else {
         await updateCategory(db, categoryId, result.data);
       }

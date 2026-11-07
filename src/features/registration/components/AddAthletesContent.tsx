@@ -15,6 +15,7 @@ import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { TextField } from '@/components/TextField';
+import type { TranslationKey } from '@/lib/i18n/pt';
 import { useT } from '@/lib/i18n/useT';
 
 import { checkEligibility } from '../checkEligibility';
@@ -26,14 +27,14 @@ import { AthleteOptionRow } from './AthleteOptionRow';
 type AddAthletesContentProps = {
   data: CategoryRegistration;
   isBusy: boolean;
-  hasActionFailed: boolean;
+  errorKey: TranslationKey | null;
   onAdd: (athleteId: string) => void;
 };
 
 export function AddAthletesContent({
   data,
   isBusy,
-  hasActionFailed,
+  errorKey,
   onAdd,
 }: AddAthletesContentProps) {
   const t = useT();
@@ -90,10 +91,8 @@ export function AddAthletesContent({
             />
           )}
         />
-        {hasActionFailed && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">
-            {t('registration.actionError')}
-          </Text>
+        {errorKey !== null && (
+          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">{t(errorKey)}</Text>
         )}
         <Button
           label={t('registration.createAthlete')}

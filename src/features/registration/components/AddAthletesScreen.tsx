@@ -38,7 +38,7 @@ export function AddAthletesScreen({ categoryId }: AddAthletesScreenProps) {
     <AddAthletesContent
       data={state.data}
       isBusy={registration.isBusy}
-      hasActionFailed={registration.hasActionFailed}
+      errorKey={registration.errorKey}
       onAdd={(athleteId) => void registration.add(athleteId)}
     />
   );

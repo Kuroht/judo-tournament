@@ -11,7 +11,7 @@ import { createCategory, FREE_GROUP_FORMAT } from '@/features/categories';
 
 import type { EntryStatus, WeighInCategory, WeighInData, WeighInEntry } from '../types';
 import { sortWeighInEntries } from '../weighInList';
-import { evaluateWeight } from '../weightRules';
+import { getCurrentStatus } from '../weightRules';
 
 // Heaviest categories have no upper limit, so "IS NULL" puts them after the others.
 const CATEGORY_ORDER = `age_classes.sortOrder IS NULL, age_classes.sortOrder, categories.sex,
@@ -32,18 +32,9 @@ function fromRow<T>(row: WithNumberBoolean<T>) {
   };
 }
 
-/**
- * Works out pass or fail from the category's current limits. The saved status could
- * be out of date, because the trainer can edit a category's limits after the weigh-in.
- */
+// The saved status could be out of date, so always show the current result.
 function withCurrentResult(entry: WeighInEntry): WeighInEntry {
-  if (entry.weighedKg === null || (entry.status !== 'passed' && entry.status !== 'failed')) {
-    return entry;
-  }
-
-  const status = evaluateWeight(entry.weighedKg, entry) === 'pass' ? 'passed' : 'failed';
-
-  return { ...entry, status };
+  return { ...entry, status: getCurrentStatus(entry.status, entry.weighedKg, entry) };
 }
 
 /** Reads a tournament's registrations and categories for the weigh-in. */
@@ -145,11 +136,12 @@ export async function moveEntry(
     return false;
   }
 
-  await db.runAsync('UPDATE entries SET categoryId = ?, status = ? WHERE id = ?', [
-    targetCategoryId,
-    status,
-    entry.entryId,
-  ]);
+  // The old category's seed and draw position mean nothing in the new one.
+  await db.runAsync(
+    `UPDATE entries SET categoryId = ?, status = ?, seed = NULL, drawPosition = NULL
+     WHERE id = ?`,
+    [targetCategoryId, status, entry.entryId],
+  );
 
   return true;
 }
@@ -186,7 +178,10 @@ export async function createFreeGroupAndMove(
       format: FREE_GROUP_FORMAT,
       isFreeGrouping: true,
     });
-    await db.runAsync('UPDATE entries SET categoryId = ? WHERE id = ?', [categoryId, entry.entryId]);
+    await db.runAsync(
+      'UPDATE entries SET categoryId = ?, seed = NULL, drawPosition = NULL WHERE id = ?',
+      [categoryId, entry.entryId],
+    );
   });
 
   return true;

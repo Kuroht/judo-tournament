@@ -43,7 +43,7 @@ export function CategoryRegistrationScreen({
       tournamentId={tournamentId}
       data={state.data}
       isBusy={registration.isBusy}
-      hasActionFailed={registration.hasActionFailed}
+      errorKey={registration.errorKey}
       onRemove={(entryId) => void registration.remove(entryId)}
     />
   );

@@ -14,8 +14,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 5 | Registration of athletes into categories | Done |
 | 6 | Weigh-in | Done |
 | 7 | Rules logic | Done |
-| 8 | Bracket generator and draw | Next. Needs confirmation of the worked examples first |
-| 9 to 14 | Poules through final polish | Not started |
+| 8 | Bracket generator and draw | Done. The trainer still needs to validate `docs/regras-para-validar.md` |
+| 9 | Poules and ranking | Next |
+| 10 to 14 | Match screen through final polish | Not started |
 
 ## Known issues
 
@@ -63,12 +64,15 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - `npm test` covers the rules, weigh-in limits, registration warnings and migrations. Other checks from steps 1 to 6, including the browser workflows, were throwaway scripts and aren't in this repo.
 - The rules logic isn't used by any screen until step 10. That step must save one score per hold, when the hold ends, and must let a hold run past the end of regular time (IJF Article 8.4).
 - A waza-ari beats any number of yuko. This follows the point values (10 and 1), but no article found says so outright for 10 or more yuko.
-- Removing a registration isn't blocked once a draw exists, because draws don't exist yet. Step 8 must add this, and must also handle athletes added after a draw.
+- A locked draw blocks registration, weigh-in and category changes. An unlocked draw instead shows as out of date and must be redrawn.
+- Poules can't be drawn until step 9, so the draw screen says so for those formats.
+- Match rows aren't saved yet. The bracket is worked out from results by `resolveBracket.ts`, and step 10 will save matches and results.
+- Separation is by club only. FPJ also separates by association, which the app doesn't store.
+- A manual swap changes the draw, so its code alone no longer reproduces it.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.
 - Random re-weighs with the 5% tolerance (FPJ Article 49) aren't supported. Only the main weigh-in is.
 - FPJ Article 17 allows one weighing, but the app lets the trainer save again to correct a typing mistake.
 - FPJ Article 18 restricts category changes in selection championships. The app doesn't enforce this, so the trainer must check it.
-- Step 8 must leave failed and no-show athletes out of the draw, and handle weigh-in changes after a draw exists. It must work out pass or fail from the current limits, as `weighInQueries.ts` does, because a saved status goes out of date if a category's limits are edited.
 - `withdrawn` is an allowed status that nothing sets yet. The weigh-in screen could overwrite it, so guard this when something starts using it.
 - `README.md` is still the Expo template's. It gets replaced in step 14.
 
