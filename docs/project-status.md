@@ -16,8 +16,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 7 | Rules logic | Done |
 | 8 | Bracket generator and draw | Done. The trainer still needs to validate `docs/regras-para-validar.md` |
 | 9 | Poules and ranking | Done |
-| 10 | Match screen | Next |
-| 11 to 14 | Match list through final polish | Not started |
+| 10 | Match screen | Done |
+| 11 | Match list, bracket progression, correcting results | Next |
+| 12 to 14 | Results through final polish | Not started |
 
 ## Known issues
 
@@ -63,15 +64,16 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Age classes and FPJ weight templates can't be edited in the app yet. Planned for step 14.
 - New FPJ categories all start as double repechage. Step 8 should suggest a format from the athlete count.
 - `npm test` covers the rules, weigh-in limits, registration warnings and migrations. Other checks from steps 1 to 6, including the browser workflows, were throwaway scripts and aren't in this repo.
-- The rules logic isn't used by any screen until step 10. That step must save one score per hold, when the hold ends, and must let a hold run past the end of regular time (IJF Article 8.4).
 - A waza-ari beats any number of yuko. This follows the point values (10 and 1), but no article found says so outright for 10 or more yuko.
 - A locked draw blocks registration, weigh-in and category changes. An unlocked draw instead shows as out of date and must be redrawn.
 - A category has at most two poules, as in FPJ Article 38. The prompt mentions more, which would need a new format.
 - Poule tie-breaks follow FPJ Article 47. IJF also uses the fewest shidos, and counts the loser's scores. The trainer is to confirm.
 - Wins by hansoku-make or withdrawal count as 100 points in a poule, which neither regulation states. A decision counts as 0.5, the FPJ's value for hantei. The trainer is to confirm.
 - Changing a category's format removes its draw, because a draw only keeps clubs apart for the format it was made for.
+- **Must fix in step 11:** a poule tie that needs a new contest (FPJ Article 47) has no way to be fought yet. In two poules, this leaves the semifinals waiting forever. It needs athletes equal on wins, points, head-to-head, total time and weight, which is likeliest if the timer is ignored, because every match's time is then the same.
+- A finished match can't be corrected until step 11. Before it's confirmed, undo works.
+- The hold timer runs on its own, and pausing the main clock doesn't pause it, so sono-mama isn't handled.
 - Step 12 must apply FPJ Article 44's exception when annulling a withdrawn athlete's poule results, and tell `rankPoule` when all matches have been fought.
-- Match rows aren't saved yet. The bracket is worked out from results by `resolveBracket.ts`, and step 10 will save matches and results.
 - Separation is by club only. FPJ also separates by association, which the app doesn't store.
 - A manual swap changes the draw, so its code alone no longer reproduces it.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.

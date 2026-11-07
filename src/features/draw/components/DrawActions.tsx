@@ -6,6 +6,7 @@
  * USED BY: DrawResult.tsx
  * =====================================================
  */
+import { router, useLocalSearchParams } from 'expo-router';
 import { useState } from 'react';
 import { View } from 'react-native';
 
@@ -29,17 +30,29 @@ export function DrawActions({
   onSetLocked,
 }: DrawActionsProps) {
   const t = useT();
+  const { id, categoryId } = useLocalSearchParams<{ id: string; categoryId: string }>();
   const [isConfirmingUnlock, setIsConfirmingUnlock] = useState(false);
 
   return (
     <>
       {isLocked ? (
-        <Button
-          label={t('draw.unlock')}
-          variant="secondary"
-          onPress={() => setIsConfirmingUnlock(true)}
-          isDisabled={isBusy}
-        />
+        <>
+          <Button
+            label={t('matches.title')}
+            onPress={() =>
+              router.push({
+                pathname: '/tournament/[id]/category-matches/[categoryId]/list',
+                params: { id, categoryId },
+              })
+            }
+          />
+          <Button
+            label={t('draw.unlock')}
+            variant="secondary"
+            onPress={() => setIsConfirmingUnlock(true)}
+            isDisabled={isBusy}
+          />
+        </>
       ) : (
         <>
           <Button label={t('draw.lock')} onPress={() => onSetLocked(true)} isDisabled={isBusy} />

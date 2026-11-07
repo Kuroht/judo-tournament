@@ -31,7 +31,7 @@ export function useReloadableFocusQuery<T>(query: (db: SQLiteDatabase) => Promis
     latestRead.current += 1;
     const thisRead = latestRead.current;
 
-    query(db)
+    return query(db)
       .then((data) => {
         if (thisRead === latestRead.current) {
           setState({ type: 'ready', data });
