@@ -26,7 +26,11 @@ type TournamentRow = Omit<Tournament, 'isArchived'> & {
 const SELECT_TOURNAMENT = `
   SELECT tournaments.*,
     (SELECT COUNT(*) FROM categories WHERE categories.tournamentId = tournaments.id)
-      AS categoryCount
+      AS categoryCount,
+    (SELECT COUNT(*) FROM entries
+       JOIN categories ON categories.id = entries.categoryId
+       WHERE categories.tournamentId = tournaments.id)
+      AS entryCount
   FROM tournaments`;
 
 function toTournament(row: TournamentRow): Tournament {

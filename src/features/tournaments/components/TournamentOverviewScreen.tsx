@@ -17,6 +17,7 @@ import { useT } from '@/lib/i18n/useT';
 
 import { useTournamentOverview } from '../hooks/useTournamentOverview';
 import { formatDisplayDate } from '../tournamentDate';
+import { TournamentStepButtons } from './TournamentStepButtons';
 
 type TournamentOverviewScreenProps = {
   tournamentId: string;
@@ -67,12 +68,7 @@ export function TournamentOverviewScreen({ tournamentId }: TournamentOverviewScr
             {t('tournaments.isArchivedNote')}
           </Text>
         )}
-        <Button
-          label={t('tournaments.openCategories', { count: details.categoryCount })}
-          onPress={() =>
-            router.push({ pathname: '/tournament/[id]/categories', params: { id: tournamentId } })
-          }
-        />
+        <TournamentStepButtons tournament={details} />
         <Button
           label={t('tournaments.edit')}
           variant="secondary"

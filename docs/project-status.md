@@ -11,8 +11,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 2 | Database, migrations, FPJ data | Done |
 | 3 | Clubs and athletes | Done |
 | 4 | Tournaments and categories | Done |
-| 5 | Registration of athletes into categories | Next |
-| 6 to 14 | Weigh-in through final polish | Not started |
+| 5 | Registration of athletes into categories | Done |
+| 6 | Weigh-in | Next |
+| 7 to 14 | Rules through final polish | Not started |
 
 ## Known issues
 
@@ -58,6 +59,8 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - New FPJ categories all start as double repechage. Step 8 should suggest a format from the athlete count.
 - `npm run lint` isn't set up, because ESLint hasn't been approved.
 - Tests so far were throwaway scripts and aren't in this repo. Bring the important ones into `jest-expo` at step 7.
+- Removing a registration isn't blocked once a draw exists, because draws don't exist yet. Step 8 must add this, and must also handle athletes added after a draw.
+- Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.
 - `README.md` is still the Expo template's. It gets replaced in step 14.
 
 ## Decisions
@@ -75,6 +78,8 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 | Text ids instead of numbers | Lets JSON backups merge between devices without clashes |
 | Tournaments can be archived but not deleted | The prompt only asks for archive, and it removes a way to lose a whole tournament |
 | Delete confirmations use a Modal, not `Alert` | `Alert` does nothing on web |
+| Age or sex mismatches warn but don't block registration | FPJ Article 4 lets athletes compete outside their age class in some cases, so the trainer decides |
+| No `eslint-disable` comments for hook rules, and no unused dependencies | React Compiler skips any function with such a comment and can remove an unused dependency. Doing both once made a reload silently stop working |
 | Vibration only at the end of a match, no sound | React Native has a built-in API, so no extra package |
 
 ## FPJ data

@@ -18,6 +18,7 @@ export type Tournament = TournamentData & {
   id: string;
   isArchived: boolean;
   categoryCount: number;
+  entryCount: number;
 };
 
 /** What the form holds while typing, which may not be valid yet. */
