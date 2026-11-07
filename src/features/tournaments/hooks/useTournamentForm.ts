@@ -9,6 +9,8 @@
 import { useSQLiteContext } from 'expo-sqlite';
 import { useEffect, useRef, useState } from 'react';
 
+import { getSavedSeasonYear } from '@/features/settings';
+
 import { createTournament, getTournament, updateTournament } from '../db/tournamentQueries';
 import { formatDisplayDate, toDisplayDate } from '../tournamentDate';
 import type { TournamentFormValues } from '../types';
@@ -46,6 +48,10 @@ export function useTournamentForm(tournamentId: string | null, onSaved: (id: str
 
   useEffect(() => {
     if (tournamentId === null) {
+      // A new tournament starts with the season chosen in the settings.
+      void getSavedSeasonYear(db).then((year) =>
+        setValues((current) => ({ ...current, seasonYear: String(year) })),
+      );
       return;
     }
 

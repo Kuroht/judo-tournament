@@ -14,6 +14,7 @@ import { useT } from '@/lib/i18n/useT';
 
 import { DatabaseSummaryText } from './DatabaseSummaryText';
 import { LanguageSelector } from './LanguageSelector';
+import { SeasonYearField } from './SeasonYearField';
 import { ThemeSelector } from './ThemeSelector';
 
 export function SettingsScreen() {
@@ -24,6 +25,8 @@ export function SettingsScreen() {
       <View className="gap-6">
         <LanguageSelector />
         <ThemeSelector />
+        <SeasonYearField />
+        <Button label={t('settings.rulePresets')} onPress={() => router.push('/rule-presets')} />
         <Button label={t('backup.title')} onPress={() => router.push('/data-tools')} />
         <DatabaseSummaryText />
       </View>

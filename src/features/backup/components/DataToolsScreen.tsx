@@ -34,6 +34,7 @@ export function DataToolsScreen() {
     <View className="gap-3 pb-2">
       {message !== null && (
         <Text
+          accessibilityLiveRegion="polite"
           className={`text-lg font-semibold ${message.isError ? 'text-red-700 dark:text-red-300' : 'text-green-800 dark:text-green-300'}`}
         >
           {t(message.key, message.values)}

@@ -20,7 +20,7 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 11 | Match list, bracket progression, correcting results | Done |
 | 12 | Results, rankings, medal table | Done |
 | 13 | JSON export and import | Done |
-| 14 | PDF printing and final polish | Next |
+| 14 | PDF printing and final polish | Done |
 
 ## Known issues
 

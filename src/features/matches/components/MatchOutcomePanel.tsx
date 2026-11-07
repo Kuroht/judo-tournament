@@ -29,7 +29,11 @@ export function MatchOutcomePanel(props: MatchOutcomePanelProps) {
 
   return (
     <View className="gap-3 rounded-xl border-4 border-green-700 bg-white p-4 dark:bg-slate-800">
-      <Text className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100">
+      {/* Announced by screen readers as soon as it appears. */}
+      <Text
+        accessibilityLiveRegion="polite"
+        className="text-center text-2xl font-bold text-slate-900 dark:text-slate-100"
+      >
         {getOutcomeText(outcome, whiteName, blueName, t)}
       </Text>
       {outcome.type === 'needsDecision' ? (

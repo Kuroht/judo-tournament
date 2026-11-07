@@ -31,6 +31,7 @@ export function MatchClockBar(props: MatchClockBarProps) {
   const t = useT();
   const [isConfirmingReset, setIsConfirmingReset] = useState(false);
   const isGoldenScore = period === 'goldenScore';
+  const clockText = formatClock(getDisplaySeconds(elapsedSeconds, period, rules));
 
   return (
     <View className="gap-2 rounded-xl bg-white p-4 dark:bg-slate-800">
@@ -40,10 +41,10 @@ export function MatchClockBar(props: MatchClockBarProps) {
         </Text>
       )}
       <Text
-        accessibilityLabel={t('matches.clockLabel')}
+        accessibilityLabel={`${t('matches.clockLabel')}: ${clockText}`}
         className="text-center text-7xl font-bold text-slate-900 dark:text-slate-100"
       >
-        {formatClock(getDisplaySeconds(elapsedSeconds, period, rules))}
+        {clockText}
       </Text>
       <View className="flex-row gap-2">
         <View className="flex-[2]">

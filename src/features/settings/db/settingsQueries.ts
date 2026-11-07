@@ -14,6 +14,7 @@ import type { DatabaseSummary, ThemePreference } from '../types';
 
 const LANGUAGE_KEY = 'language';
 const THEME_KEY = 'theme';
+const SEASON_YEAR_KEY = 'seasonYear';
 
 // ---------------------------------------------
 // SECTION: Helpers
@@ -55,6 +56,22 @@ export async function getSavedLanguage(db: SQLiteDatabase): Promise<Language> {
   const value = await readSetting(db, LANGUAGE_KEY);
 
   return isLanguage(value) ? value : 'pt';
+}
+
+/**
+ * Reads the season year that new tournaments start with.
+ * @returns the saved year, or this year if none is saved
+ */
+export async function getSavedSeasonYear(db: SQLiteDatabase): Promise<number> {
+  const value = await readSetting(db, SEASON_YEAR_KEY);
+  const year = Number(value);
+
+  return value !== null && Number.isInteger(year) && year > 0 ? year : new Date().getFullYear();
+}
+
+/** Saves the season year. */
+export function saveSeasonYear(db: SQLiteDatabase, year: number): Promise<void> {
+  return saveSetting(db, SEASON_YEAR_KEY, String(year));
 }
 
 /** Saves the chosen language. */

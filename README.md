@@ -1,56 +1,79 @@
-# Welcome to your Expo app 👋
+# Judo Tournament
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+An app for running a Portuguese judo tournament on an Android tablet: clubs and athletes, weigh-in, draw, matches, results and medals. It works **completely offline**, and nothing leaves the tablet unless you export it.
 
-## Get started
+> **Before relying on it:** your trainer still needs to validate the rules in [`docs/regras-para-validar.md`](docs/regras-para-validar.md), and `docs/project-status.md` lists the known limits.
 
-1. Install dependencies
+## Running a tournament
 
-   ```bash
-   npm install
-   ```
+Open a tournament, and work through its buttons from top to bottom:
 
-2. Start the app
+1. **Categorias:** choose the categories and formats.
+2. **Inscrições:** add athletes to categories.
+3. **Pesagem:** record weights and no-shows.
+4. **Sorteio:** draw each category, then **lock** it. Matches only exist once a draw is locked.
+5. **Combates:** tap the big button to open the next match.
+6. **Resultados:** see the places and medals, and print them or save them as a PDF.
 
-   ```bash
-   npx expo start
-   ```
+**Correcting a mistake:** before confirming a match, use **Anular última ação**. After confirming, open the match and use **Corrigir o resultado**.
 
-In the output, you'll find options to open the app in a
+## Backing up your data
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+The data lives only on the tablet. **If the tablet is lost or the app is uninstalled, it's gone**, including the automatic copies.
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+- **After every tournament:** go to **Definições → Exportar e importar dados → Exportar tudo**, and save the file somewhere off the tablet, such as Drive or email.
+- **To restore:** on the same screen, tap **Escolher um ficheiro**, check the preview, then choose:
+  - **Juntar** only adds. What's already on the tablet stays as it is.
+  - **Substituir tudo** swaps everything for the file's contents. A copy is saved first, which you can bring back with **Repor uma cópia automática**.
+- **To move one tournament to another tablet:** use **Exportar: {tournament}**, then **Juntar** on the other tablet.
 
-## Get a fresh project
+## Running it on your computer
 
-When you're ready, run:
+You need [Node.js](https://nodejs.org) (LTS).
 
 ```bash
-npm run reset-project
+npm install
+npx expo start
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+- **On the tablet:** install **Expo Go for SDK 57**, and scan the QR code. The Play Store's Expo Go may be for a newer SDK and refuse to open the app. If so, get the right version from [expo.dev/go](https://expo.dev/go).
+- **In a browser, for quick tests:** press `w`. A browser can't test vibration, keep-awake, sharing or the Android print screen.
 
-### Other setup steps
+Expo Go needs your computer running, so **it can't be used at a real tournament**. For that, you need the installed build below.
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+## Installing it on the tablet
 
-## Learn more
+This builds an APK in Expo's cloud. It needs a free [Expo account](https://expo.dev), and an internet connection only while building.
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm install --global eas-cli
+eas login
+eas build --platform android --profile tablet
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The first time, it asks for an Android package name, such as `com.yourname.judotournament`. Choose carefully: changing it later makes Android treat it as a different app, with separate data.
 
-## Join the community
+When it finishes, it gives you a link to the APK. Open it on the tablet and install it, allowing installs from that source if asked.
 
-Join our community of developers creating universal apps.
+**To update:** raise `version` in `app.json`, build again and install over the old app. Your data stays, but export it first anyway.
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+**After installing, do a full test with airplane mode on,** because this is the first time the app runs without your computer.
+
+## Checks for developers
+
+```bash
+npm test             # logic and database tests
+npx tsc --noEmit     # types
+npx eslint src       # code style
+npx expo-doctor      # Expo setup
+```
+
+## How the code is organized
+
+- `src/app/`: one thin file per screen, for Expo Router.
+- `src/features/`: everything for one job, such as `matches` or `backup`. Features only use each other through their `index.ts`.
+- `src/lib/rules/` and `src/lib/brackets/`: the judo rules and brackets, as pure functions with worked examples in their tests.
+- `src/lib/db/`: the database and its migrations.
+- `docs/`: `project-status.md` has decisions and known limits, and `regras-para-validar.md` is the rules document for the trainer.
+
+**Changing the database:** add a new migration at the end of `migrations.ts`, and never edit an old one, because tablets have already run it. Then update `src/features/backup/backupTables.ts` and add a step in `migrateBackup.ts`. A test fails if you forget the table list.

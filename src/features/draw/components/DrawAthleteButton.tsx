@@ -33,7 +33,7 @@ export function DrawAthleteButton({ entry, isSelected, onSelect }: DrawAthleteBu
       <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
         {`${isSelected ? '✓ ' : ''}${entry.drawPosition}. ${entry.name}${seed}`}
       </Text>
-      <Text className="text-sm text-slate-700 dark:text-slate-200">
+      <Text className="text-base text-slate-700 dark:text-slate-200">
         {entry.clubName ?? t('athletes.noClub')}
       </Text>
     </Pressable>

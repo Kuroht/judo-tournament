@@ -19,6 +19,7 @@ import { buildMedalTable } from '../buildResults';
 import { useTournamentResults } from '../hooks/useTournamentResults';
 import { CategoryResultCard } from './CategoryResultCard';
 import { MedalRowCard } from './MedalRowCard';
+import { PrintButtons } from './PrintButtons';
 
 type ResultsScreenProps = {
   tournamentId: string;
@@ -40,6 +41,7 @@ export function ResultsScreen({ tournamentId }: ResultsScreenProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
+        <PrintButtons tournamentId={tournamentId} />
         <View className="flex-row gap-2">
           <OptionButton
             label={t('results.categories')}

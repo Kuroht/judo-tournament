@@ -19,6 +19,16 @@ type EntryRow = {
   tournamentName: string;
 };
 
+/** Reads a tournament's name, which goes at the top of what is printed. */
+export async function getTournamentName(db: SQLiteDatabase, tournamentId: string): Promise<string> {
+  const row = await db.getFirstAsync<{ name: string }>(
+    'SELECT name FROM tournaments WHERE id = ?',
+    [tournamentId],
+  );
+
+  return row?.name ?? '';
+}
+
 /**
  * Reads an athlete's history, newest tournament first. It's worked out from each
  * category's contests, so that a result that no longer counts isn't shown.
