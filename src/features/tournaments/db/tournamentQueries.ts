@@ -30,7 +30,11 @@ const SELECT_TOURNAMENT = `
     (SELECT COUNT(*) FROM entries
        JOIN categories ON categories.id = entries.categoryId
        WHERE categories.tournamentId = tournaments.id)
-      AS entryCount
+      AS entryCount,
+    (SELECT COUNT(*) FROM entries
+       JOIN categories ON categories.id = entries.categoryId
+       WHERE categories.tournamentId = tournaments.id AND entries.status <> 'registered')
+      AS weighInDoneCount
   FROM tournaments`;
 
 function toTournament(row: TournamentRow): Tournament {

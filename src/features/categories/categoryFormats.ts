@@ -4,7 +4,8 @@
  * PURPOSE: The competition formats, and which text names
  *          each one.
  * USED BY: categoryQueries.ts, CategoryRow.tsx,
- *          CategoryFormFields.tsx, useCategoryForm.ts
+ *          CategoryFormFields.tsx, useCategoryForm.ts,
+ *          and weigh-in through index.ts
  * =====================================================
  */
 import type { TranslationKey } from '@/lib/i18n/pt';

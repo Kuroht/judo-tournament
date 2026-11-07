@@ -32,6 +32,13 @@ export function TournamentStepButtons({ tournament }: TournamentStepButtonsProps
         label={t('tournaments.openRegistration', { count: tournament.entryCount })}
         onPress={() => router.push({ pathname: '/tournament/[id]/registration', params })}
       />
+      <Button
+        label={t('tournaments.openWeighIn', {
+          done: tournament.weighInDoneCount,
+          total: tournament.entryCount,
+        })}
+        onPress={() => router.push({ pathname: '/tournament/[id]/weigh-in', params })}
+      />
     </>
   );
 }

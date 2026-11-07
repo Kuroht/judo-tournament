@@ -3,8 +3,8 @@
  * FILE: categoryQueries.ts
  * PURPOSE: All the SQL for a tournament's categories.
  * USED BY: useCategories.ts, useCategoryForm.ts,
- *          useAddFpjCategories.ts, and tournaments
- *          through index.ts
+ *          useAddFpjCategories.ts, and tournaments and
+ *          weigh-in through index.ts
  * =====================================================
  */
 import type { SQLiteDatabase } from 'expo-sqlite';

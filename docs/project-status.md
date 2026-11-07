@@ -12,8 +12,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 3 | Clubs and athletes | Done |
 | 4 | Tournaments and categories | Done |
 | 5 | Registration of athletes into categories | Done |
-| 6 | Weigh-in | Next |
-| 7 to 14 | Rules through final polish | Not started |
+| 6 | Weigh-in | Done |
+| 7 | Rules logic | Next |
+| 8 to 14 | Brackets through final polish | Not started |
 
 ## Known issues
 
@@ -27,6 +28,7 @@ Check these first, because they can't be tested on web or were only checked by r
 - The on-screen keyboard: the search box in the option picker, and reaching fields on the form screens.
 - Long club names wrapping in the option picker.
 - **Try again** on the error screen, which retries in place on Android and reloads the page on web.
+- In the weigh-in dialog: the category list opening inside it (a modal inside a modal), the keyboard opening by itself, and the big weight text not being clipped.
 - Accented text search and sorting (`normalize` and `localeCompare`).
 - Working in airplane mode from an installed build. A development build still needs the computer.
 
@@ -61,6 +63,11 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Tests so far were throwaway scripts and aren't in this repo. Bring the important ones into `jest-expo` at step 7.
 - Removing a registration isn't blocked once a draw exists, because draws don't exist yet. Step 8 must add this, and must also handle athletes added after a draw.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.
+- Random re-weighs with the 5% tolerance (FPJ Article 49) aren't supported. Only the main weigh-in is.
+- FPJ Article 17 allows one weighing, but the app lets the trainer save again to correct a typing mistake.
+- FPJ Article 18 restricts category changes in selection championships. The app doesn't enforce this, so the trainer must check it.
+- Step 8 must leave failed and no-show athletes out of the draw, and handle weigh-in changes after a draw exists. It must work out pass or fail from the current limits, as `weighInQueries.ts` does, because a saved status goes out of date if a category's limits are edited.
+- `withdrawn` is an allowed status that nothing sets yet. The weigh-in screen could overwrite it, so guard this when something starts using it.
 - `README.md` is still the Expo template's. It gets replaced in step 14.
 
 ## Decisions
@@ -80,6 +87,7 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 | Delete confirmations use a Modal, not `Alert` | `Alert` does nothing on web |
 | Age or sex mismatches warn but don't block registration | FPJ Article 4 lets athletes compete outside their age class in some cases, so the trainer decides |
 | No `eslint-disable` comments for hook rules, and no unused dependencies | React Compiler skips any function with such a comment and can remove an unused dependency. Doing both once made a reload silently stop working |
+| Weights are compared in whole grams | Avoids decimal errors, and a limit is a decision about whether someone competes |
 | Vibration only at the end of a match, no sound | React Native has a built-in API, so no extra package |
 
 ## FPJ data

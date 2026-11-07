@@ -3,7 +3,8 @@
  * FILE: useReloadableFocusQuery.ts
  * PURPOSE: Reads data when a screen comes into view, and
  *          again whenever the screen asks for fresh data.
- * USED BY: useFocusQuery.ts, useCategoryRegistration.ts
+ * USED BY: useFocusQuery.ts, useCategoryRegistration.ts,
+ *          useWeighIn.ts
  * =====================================================
  */
 import { useFocusEffect } from 'expo-router';
