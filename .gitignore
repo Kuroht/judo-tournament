@@ -38,6 +38,13 @@ yarn-error.*
 
 example
 
+# rule documents owned by the IJF and FPJ, kept locally for reference
+docs/*.pdf
+docs/f.txt
+docs/fpj.txt
+docs/ref.txt
+docs/sor.txt
+
 # generated native folders
 /ios
 /android

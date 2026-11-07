@@ -13,8 +13,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 4 | Tournaments and categories | Done |
 | 5 | Registration of athletes into categories | Done |
 | 6 | Weigh-in | Done |
-| 7 | Rules logic | Next |
-| 8 to 14 | Brackets through final polish | Not started |
+| 7 | Rules logic | Done |
+| 8 | Bracket generator and draw | Next. Needs confirmation of the worked examples first |
+| 9 to 14 | Poules through final polish | Not started |
 
 ## Known issues
 
@@ -60,7 +61,10 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Age classes and FPJ weight templates can't be edited in the app yet. Planned for step 14.
 - New FPJ categories all start as double repechage. Step 8 should suggest a format from the athlete count.
 - `npm run lint` isn't set up, because ESLint hasn't been approved.
-- Tests so far were throwaway scripts and aren't in this repo. Bring the important ones into `jest-expo` at step 7.
+- `npm test` covers the rules, weigh-in limits, registration warnings and migrations. Other checks from steps 1 to 6, including the browser workflows, were throwaway scripts and aren't in this repo.
+- The rules logic isn't used by any screen until step 10. That step must save one score per hold, when the hold ends, and must let a hold run past the end of regular time (IJF Article 8.4).
+- `tsconfig.json` relies on `@types/node`, which is only installed because other packages need it. Adding it directly needs approval.
+- A waza-ari beats any number of yuko. This follows the point values (10 and 1), but no article found says so outright for 10 or more yuko.
 - Removing a registration isn't blocked once a draw exists, because draws don't exist yet. Step 8 must add this, and must also handle athletes added after a draw.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.
 - Random re-weighs with the 5% tolerance (FPJ Article 49) aren't supported. Only the main weigh-in is.
@@ -89,6 +93,13 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 | No `eslint-disable` comments for hook rules, and no unused dependencies | React Compiler skips any function with such a comment and can remove an unused dependency. Doing both once made a reload silently stop working |
 | Weights are compared in whole grams | Avoids decimal errors, and a limit is a decision about whether someone competes |
 | Vibration only at the end of a match, no sound | React Native has a built-in API, so no extra package |
+
+## Rule documents
+
+The FPJ and IJF PDFs and their extracted text are in `docs/` on the owner's computer. They are in `.gitignore`, so a fresh clone won't have them. Sources:
+
+- [FPJ regulations in force](https://www.fpj.pt/normativos/regulamentos-em-vigor/)
+- [IJF documents](https://www.ijf.org/documents)
 
 ## FPJ data
 
