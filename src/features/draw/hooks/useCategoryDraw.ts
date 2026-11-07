@@ -12,6 +12,7 @@ import { useCallback, useRef, useState } from 'react';
 import type { CategoryFormat } from '@/features/categories';
 import { useReloadableFocusQuery } from '@/hooks/useReloadableFocusQuery';
 import { assignDrawPositions } from '@/lib/brackets/assignDrawPositions';
+import { assignPoulePositions } from '@/lib/brackets/assignPoulePositions';
 import { createDrawSeed } from '@/lib/brackets/seededRandom';
 
 import {
@@ -23,7 +24,7 @@ import {
   setEntrySeed,
   swapDrawPositions,
 } from '../db/drawQueries';
-import { getNextSeedNumber } from '../drawRules';
+import { getNextSeedNumber, isEliminationFormat } from '../drawRules';
 import type { DrawEntry } from '../types';
 
 /**
@@ -73,12 +74,16 @@ export function useCategoryDraw(categoryId: string) {
    * Runs the draw.
    * @param typedSeed a seed to repeat an earlier draw. Empty text creates a new seed.
    */
-  function runDraw(entries: readonly DrawEntry[], typedSeed: string) {
+  function runDraw(entries: readonly DrawEntry[], format: CategoryFormat, typedSeed: string) {
     // Codes are always capitals, so typing one in lower case still repeats the draw.
     const cleanedSeed = typedSeed.trim().toUpperCase();
     const seed = cleanedSeed === '' ? createDrawSeed() : cleanedSeed;
 
-    return run(() => saveDraw(db, categoryId, seed, assignDrawPositions(entries, seed)));
+    const positions = isEliminationFormat(format)
+      ? assignDrawPositions(entries, seed)
+      : assignPoulePositions(entries, seed, format === 'twoPoules' ? 2 : 1);
+
+    return run(() => saveDraw(db, categoryId, seed, positions));
   }
 
   return {

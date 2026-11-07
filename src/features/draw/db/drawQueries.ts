@@ -197,11 +197,18 @@ export async function setDrawLocked(
   ]);
 }
 
-/** Changes a category's competition format. */
+/**
+ * Changes a category's competition format, and removes its draw. A draw only keeps
+ * clubs apart for the format it was made for.
+ */
 export async function setCategoryFormat(
   db: SQLiteDatabase,
   categoryId: string,
   format: CategoryFormat,
 ): Promise<void> {
-  await db.runAsync('UPDATE categories SET format = ? WHERE id = ?', [format, categoryId]);
+  await db.withTransactionAsync(async () => {
+    await db.runAsync('UPDATE categories SET format = ? WHERE id = ?', [format, categoryId]);
+    await db.runAsync('DELETE FROM draws WHERE categoryId = ?', [categoryId]);
+    await db.runAsync('UPDATE entries SET drawPosition = NULL WHERE categoryId = ?', [categoryId]);
+  });
 }

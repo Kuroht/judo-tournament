@@ -142,21 +142,34 @@ export async function updateCategory(
   id: string,
   category: CategoryData,
 ): Promise<void> {
-  await db.runAsync(
-    `UPDATE categories
-     SET ageClassId = ?, sex = ?, label = ?, minKg = ?, maxKg = ?, format = ?, isFreeGrouping = ?
-     WHERE id = ?`,
-    [
-      category.ageClassId,
-      category.sex,
-      category.label,
-      category.minKg,
-      category.maxKg,
-      category.format,
-      category.isFreeGrouping ? 1 : 0,
-      id,
-    ],
+  const current = await db.getFirstAsync<{ format: CategoryFormat }>(
+    'SELECT format FROM categories WHERE id = ?',
+    [id],
   );
+
+  await db.withTransactionAsync(async () => {
+    await db.runAsync(
+      `UPDATE categories
+       SET ageClassId = ?, sex = ?, label = ?, minKg = ?, maxKg = ?, format = ?, isFreeGrouping = ?
+       WHERE id = ?`,
+      [
+        category.ageClassId,
+        category.sex,
+        category.label,
+        category.minKg,
+        category.maxKg,
+        category.format,
+        category.isFreeGrouping ? 1 : 0,
+        id,
+      ],
+    );
+
+    // A draw only keeps clubs apart for the format it was made for.
+    if (current !== null && current.format !== category.format) {
+      await db.runAsync('DELETE FROM draws WHERE categoryId = ?', [id]);
+      await db.runAsync('UPDATE entries SET drawPosition = NULL WHERE categoryId = ?', [id]);
+    }
+  });
 }
 
 /**

@@ -12,6 +12,8 @@ As regras vêm do **Regulamento de Organização de Provas 2026 da FPJ** e das *
 
 Estas são as dúvidas que os regulamentos não resolveram por completo.
 
+- [ ] **Poules com mais de 5 atletas:** a FPJ não indica a ordem dos combates para 6 ou mais atletas numa só poule. A aplicação calcula uma ordem em que todos se defrontam uma vez. Está certo?
+
 - [ ] **Benjamins, Infantis e Iniciados:** o regulamento indica a idade, mas não o tempo de combate nem os pesos. Estamos a usar **2 minutos** e **grupos livres**, formados depois da pesagem. Está certo?
   - Tempo correto: ______
 - [ ] **Benjamins:** o regulamento indica "10". Estamos a considerar **10 anos ou menos**. Está certo?
@@ -19,6 +21,9 @@ Estas são as dúvidas que os regulamentos não resolveram por completo.
 - [ ] **Ponto de ouro decidido por shido:** estamos a assumir que **não**, como nas regras da IJF. Um shido só decide se for o terceiro (hansoku-make). A FPJ segue a mesma regra? *(Não consultámos o Regulamento de Arbitragem da FPJ de 2021.)*
 - [ ] **Vencidos nos combates de bronze:** ficam em **5.º lugar**?
 - [ ] **Pontos nas poules:** estamos a contar **só os pontos de quem vence** cada combate (FPJ, Artigo 41). A IJF conta também os pontos de quem perde. Qual devemos usar? Resposta: ______
+- [ ] **Desempate nas poules:** usamos a ordem da FPJ. A IJF tem mais um critério, **menos shidos**, antes do tempo total. Se o empate persistir, a IJF pode atribuir o mesmo lugar, enquanto a FPJ manda fazer um novo combate. Usamos só as regras da FPJ?
+- [ ] **Empate entre 3 atletas:** se o resultado entre eles só separar um, os outros dois passam ao critério seguinte (tempo). Deve antes contar o combate direto entre esses dois?
+- [ ] **Pontos noutras vitórias:** nenhum regulamento indica os pontos de uma vitória por hansoku-make ou desistência. Estamos a usar **100 pontos**, como na falta de comparência. Para uma decisão, usamos **0,5 pontos**, como o hantei na FPJ. Na IJF, o hantei vale 0. Está certo?
 - [ ] **Separação de atletas:** a FPJ separa por clube e por associação. A aplicação, para já, só **separa por clube**. Chega para os nossos torneios?
 - [ ] **Torneios locais:** estas regras são das provas nacionais. Os torneios em que a aplicação vai ser usada seguem as mesmas regras? O que muda? ______
 
@@ -177,6 +182,8 @@ Os números são as posições no sorteio. Neste exemplo, ganha sempre o número
 | Yuko | 1 | [ ] |
 | Hantei (só Veteranos) | 0,5 | [ ] |
 | Falta de comparência do adversário | 100 | [ ] |
+| Hansoku-make do adversário ou desistência *(a validar)* | 100 | [ ] |
+| Decisão em qualquer outro escalão *(a validar)* | 0,5 | [ ] |
 
 ### Critérios de desempate, por esta ordem (Artigo 47)
 

@@ -3,7 +3,8 @@
  * FILE: assignDrawPositions.ts
  * PURPOSE: The draw: gives each athlete a position, keeping
  *          athletes from the same club apart where possible.
- * USED BY: useCategoryDraw.ts, DrawResult.tsx
+ * USED BY: useCategoryDraw.ts, DrawResult.tsx,
+ *          assignPoulePositions.ts
  * =====================================================
  */
 import { getBracketLayout, getBracketSize, getPoolAt } from './bracketLayout';
@@ -89,28 +90,18 @@ export function findClubConflicts(
 }
 
 /**
- * Runs the draw. The same athletes, seeds and code always give the same draw.
+ * Sets the order athletes are placed in, for elimination and poule draws alike.
  * @param athletes the athletes in the draw
- * @param seed the text the random numbers start from
- * @returns each athlete's position from 1 upward, by entry id. Seeds take the lowest
- *          positions, which also gives them the byes.
+ * @param random a generator from createSeededRandom
+ * @returns the seeds in order, and the others in the order to place them
  */
-export function assignDrawPositions(
-  athletes: readonly DrawAthlete[],
-  seed: string,
-): Map<string, number> {
-  const random = createSeededRandom(seed);
-  const places = describeSheet(athletes.length);
-  const positions = new Map<string, number>();
-
+export function orderForPlacement(athletes: readonly DrawAthlete[], random: () => number) {
   // 1. Sort by id first, so that the order the database returns can't change the draw.
   //    A plain comparison, because localeCompare can differ between devices.
   const sorted = [...athletes].sort((a, b) => (a.entryId < b.entryId ? -1 : 1));
   const seeded = sorted
     .filter((athlete) => athlete.seed !== null)
     .sort((a, b) => (a.seed ?? 0) - (b.seed ?? 0));
-
-  seeded.forEach((athlete, index) => positions.set(athlete.entryId, index + 1));
 
   // 2. Biggest clubs go first, because they're the hardest to keep apart.
   //    Equal sizes keep their shuffled order, which is what the index is for.
@@ -125,8 +116,30 @@ export function assignDrawPositions(
     .sort((a, b) => clubSize(b.athlete.clubId) - clubSize(a.athlete.clubId) || a.index - b.index)
     .map(({ athlete }) => athlete);
 
+  return { seeded, order };
+}
+
+/**
+ * Runs the draw for an elimination bracket. The same athletes, seeds and code always
+ * give the same draw.
+ * @param athletes the athletes in the draw
+ * @param seed the text the random numbers start from
+ * @returns each athlete's position from 1 upward, by entry id. Seeds take the lowest
+ *          positions, which also gives them the byes.
+ */
+export function assignDrawPositions(
+  athletes: readonly DrawAthlete[],
+  seed: string,
+): Map<string, number> {
+  const random = createSeededRandom(seed);
+  const places = describeSheet(athletes.length);
+  const positions = new Map<string, number>();
+  const { seeded, order } = orderForPlacement(athletes, random);
+
+  seeded.forEach((athlete, index) => positions.set(athlete.entryId, index + 1));
+
   let freePositions = shuffle(
-    Array.from({ length: unseeded.length }, (_, index) => seeded.length + index + 1),
+    Array.from({ length: order.length }, (_, index) => seeded.length + index + 1),
     random,
   );
   const clubOf = new Map<number, string>();

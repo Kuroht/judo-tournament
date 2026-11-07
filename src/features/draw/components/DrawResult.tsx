@@ -1,24 +1,27 @@
 /**
  * =====================================================
  * FILE: DrawResult.tsx
- * PURPOSE: A finished draw: its seed, any clubmates who
+ * PURPOSE: A finished draw: its code, any clubmates who
  *          meet first, swaps, and locking.
- * USED BY: CategoryDrawContent.tsx
+ * USED BY: DrawStage.tsx
  * =====================================================
  */
 import { useState } from 'react';
 import { Text, View } from 'react-native';
 
-import { Button } from '@/components/Button';
-import { ConfirmDialog } from '@/components/ConfirmDialog';
+import type { CategoryFormat } from '@/features/categories';
 import { findClubConflicts } from '@/lib/brackets/assignDrawPositions';
 import { useT } from '@/lib/i18n/useT';
 
+import { isEliminationFormat } from '../drawRules';
 import type { DrawEntry } from '../types';
 import { BracketPreview } from './BracketPreview';
+import { DrawActions } from './DrawActions';
+import { PoulePreview } from './PoulePreview';
 
 type DrawResultProps = {
   entries: readonly DrawEntry[];
+  format: CategoryFormat;
   seed: string;
   isLocked: boolean;
   isBusy: boolean;
@@ -29,15 +32,17 @@ type DrawResultProps = {
 };
 
 export function DrawResult(props: DrawResultProps) {
-  const { entries, seed, isLocked, isBusy, onSwap, onSetLocked } = props;
+  const { entries, format, seed, isLocked, isBusy, onSwap } = props;
   const t = useT();
   const [selected, setSelected] = useState<DrawEntry | null>(null);
-  const [isConfirmingUnlock, setIsConfirmingUnlock] = useState(false);
 
-  // Worked out each time, so that it stays right after a swap.
+  // Worked out each time, so that it stays right after a swap. In a poule everyone
+  // meets everyone, so clubmates can't be avoided and their matches simply go first.
+  const isElimination = isEliminationFormat(format);
   const positions = new Map(entries.map((entry) => [entry.entryId, entry.drawPosition ?? 0]));
-  const conflicts = findClubConflicts(entries, positions);
+  const conflicts = isElimination ? findClubConflicts(entries, positions) : [];
   const nameOf = (entryId: string) => entries.find((entry) => entry.entryId === entryId)?.name;
+  const selectedEntryId = selected?.entryId ?? null;
 
   function handleSelect(entry: DrawEntry) {
     if (selected === null) {
@@ -51,6 +56,8 @@ export function DrawResult(props: DrawResultProps) {
     }
     setSelected(null);
   }
+
+  const onSelect = isLocked || isBusy ? null : handleSelect;
 
   return (
     <View className="flex-1 gap-3">
@@ -66,53 +73,23 @@ export function DrawResult(props: DrawResultProps) {
         <Text className="text-base text-slate-700 dark:text-slate-200">{t('draw.swapHelp')}</Text>
       )}
       <View className="flex-1">
-        <BracketPreview
-          entries={entries}
-          selectedEntryId={selected?.entryId ?? null}
-          onSelect={isLocked || isBusy ? null : handleSelect}
-        />
+        {isElimination ? (
+          <BracketPreview entries={entries} selectedEntryId={selectedEntryId} onSelect={onSelect} />
+        ) : (
+          <PoulePreview
+            entries={entries}
+            hasTwoPoules={format === 'twoPoules'}
+            selectedEntryId={selectedEntryId}
+            onSelect={onSelect}
+          />
+        )}
       </View>
-      {isLocked ? (
-        <Button
-          label={t('draw.unlock')}
-          variant="secondary"
-          onPress={() => setIsConfirmingUnlock(true)}
-          isDisabled={isBusy}
-        />
-      ) : (
-        <>
-          <Button label={t('draw.lock')} onPress={() => onSetLocked(true)} isDisabled={isBusy} />
-          <View className="flex-row gap-2">
-            <View className="flex-1">
-              <Button
-                label={t('draw.redraw')}
-                variant="secondary"
-                onPress={props.onRedraw}
-                isDisabled={isBusy}
-              />
-            </View>
-            <View className="flex-1">
-              <Button
-                label={t('draw.changeSeeds')}
-                variant="secondary"
-                onPress={props.onChangeSeeds}
-                isDisabled={isBusy}
-              />
-            </View>
-          </View>
-        </>
-      )}
-      <ConfirmDialog
-        isVisible={isConfirmingUnlock}
-        title={t('draw.unlockTitle')}
-        message={t('draw.unlockMessage')}
-        confirmLabel={t('draw.unlock')}
-        cancelLabel={t('common.cancel')}
-        onConfirm={() => {
-          setIsConfirmingUnlock(false);
-          onSetLocked(false);
-        }}
-        onCancel={() => setIsConfirmingUnlock(false)}
+      <DrawActions
+        isLocked={isLocked}
+        isBusy={isBusy}
+        onRedraw={props.onRedraw}
+        onChangeSeeds={props.onChangeSeeds}
+        onSetLocked={props.onSetLocked}
       />
     </View>
   );

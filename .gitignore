@@ -45,6 +45,9 @@ docs/fpj.txt
 docs/ref.txt
 docs/sor.txt
 
+# temporary test scripts
+docs/scratchpad/
+
 # generated native folders
 /ios
 /android

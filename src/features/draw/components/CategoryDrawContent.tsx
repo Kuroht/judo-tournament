@@ -1,27 +1,23 @@
 /**
  * =====================================================
  * FILE: CategoryDrawContent.tsx
- * PURPOSE: Shows the right stage of one category's draw:
- *          suggested format, seeds, or the finished draw.
+ * PURPOSE: One category's draw page: its details, warnings
+ *          and suggested format, above the current stage.
  * USED BY: CategoryDrawScreen.tsx
  * =====================================================
  */
 import { Text, View } from 'react-native';
 
 import { Button } from '@/components/Button';
-import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
 import { CATEGORY_FORMAT_LABELS } from '@/features/categories';
 import { suggestFormat } from '@/lib/brackets/suggestFormat';
 import { useT } from '@/lib/i18n/useT';
 
-import { isDrawCurrent, isEliminationFormat } from '../drawRules';
+import { isDrawCurrent } from '../drawRules';
 import type { useCategoryDraw } from '../hooks/useCategoryDraw';
 import type { CategoryDraw } from '../types';
-import { DrawResult } from './DrawResult';
-import { DrawSetup } from './DrawSetup';
-
-const MIN_ATHLETES_FOR_DRAW = 2;
+import { DrawStage } from './DrawStage';
 
 type CategoryDrawContentProps = {
   data: CategoryDraw;
@@ -34,44 +30,6 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
   const suggestion = suggestFormat(entries.length);
   const isCurrent = isDrawCurrent(entries, seed, data.drawnEntryCount);
   const title = [data.ageClassName, t(`categories.sex.${data.sex}`), data.label];
-
-  let stage = <EmptyState message={t('draw.tooFewAthletes')} />;
-  if (data.isLocked && !isCurrent) {
-    // Running a new draw would silently replace a locked one, so it must be unlocked first.
-    stage = (
-      <EmptyState
-        message={t('draw.lockedMessage')}
-        actionLabel={t('draw.unlock')}
-        onAction={() => void draw.setLocked(false)}
-      />
-    );
-  } else if (entries.length >= MIN_ATHLETES_FOR_DRAW) {
-    if (!isEliminationFormat(format)) {
-      stage = <EmptyState message={t('draw.poulesComingSoon')} />;
-    } else if (isCurrent && seed !== null) {
-      stage = (
-        <DrawResult
-          entries={entries}
-          seed={seed}
-          isLocked={data.isLocked}
-          isBusy={draw.isBusy}
-          onSwap={(first, second) => void draw.swap(first, second)}
-          onRedraw={() => void draw.runDraw(entries, '')}
-          onChangeSeeds={() => void draw.clear()}
-          onSetLocked={(isLocked) => void draw.setLocked(isLocked)}
-        />
-      );
-    } else {
-      stage = (
-        <DrawSetup
-          entries={entries}
-          isBusy={draw.isBusy}
-          onToggleSeed={(entry) => void draw.toggleSeed(entry, entries)}
-          onRunDraw={(typedSeed) => void draw.runDraw(entries, typedSeed)}
-        />
-      );
-    }
-  }
 
   return (
     <Screen>
@@ -92,7 +50,7 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
             {`⚠ ${t('draw.outOfDate')}`}
           </Text>
         )}
-        {!data.isLocked && suggestion !== format && entries.length >= MIN_ATHLETES_FOR_DRAW && (
+        {!data.isLocked && suggestion !== format && entries.length >= 2 && (
           <Button
             label={t('draw.useSuggestion', { format: t(CATEGORY_FORMAT_LABELS[suggestion]) })}
             variant="secondary"
@@ -105,7 +63,7 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
             {t('common.saveError')}
           </Text>
         )}
-        {stage}
+        <DrawStage data={data} draw={draw} isCurrent={isCurrent} />
       </View>
     </Screen>
   );
