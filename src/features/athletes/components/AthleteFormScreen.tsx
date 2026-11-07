@@ -5,6 +5,7 @@
  * USED BY: src/app/athlete/new.tsx, src/app/athlete/[id].tsx
  * =====================================================
  */
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { ScrollView, Text } from 'react-native';
 
@@ -53,6 +54,15 @@ export function AthleteFormScreen({ athleteId }: AthleteFormScreenProps) {
           </Text>
         )}
         <Button label={t('common.save')} onPress={() => void form.save()} isDisabled={form.isBusy} />
+        {athleteId !== null && (
+          <Button
+            label={t('results.history')}
+            variant="secondary"
+            onPress={() =>
+              router.push({ pathname: '/athlete-history/[id]', params: { id: athleteId } })
+            }
+          />
+        )}
         {athleteId !== null && (
           <Button
             label={t('common.delete')}

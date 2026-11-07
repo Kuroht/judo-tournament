@@ -18,8 +18,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 9 | Poules and ranking | Done |
 | 10 | Match screen | Done |
 | 11 | Match list, bracket progression, correcting results | Done |
-| 12 | Results, rankings, medal table | Next |
-| 13 and 14 | Export and import through final polish | Not started |
+| 12 | Results, rankings, medal table | Done |
+| 13 | JSON export and import | Next |
+| 14 | PDF printing and final polish | Not started |
 
 ## Known issues
 
@@ -73,9 +74,9 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Changing a category's format removes its draw, because a draw only keeps clubs apart for the format it was made for.
 - The hold timer runs on its own, and pausing the main clock doesn't pause it, so sono-mama isn't handled.
 - After a correction changes a later contest's athletes, opening that contest sets its old result aside for good, even if another correction brings the same athletes back. The row stays in the database, with an empty `matchKey`.
-- Step 12 must read results through `buildCategoryContests`, because a saved finished row only counts if the same two athletes still meet.
-- Step 12 must also rank poules using their tie contests. `buildPouleContests` already works out the final order, but `buildCategoryContests` doesn't return it yet.
-- Step 12 must apply FPJ Article 44's exception when annulling a withdrawn athlete's poule results, and tell `rankPoule` when all matches have been fought.
+- An unsporting hansoku-make (FPJ Article 45.2) can't be recorded, so that athlete can still be repechaged. Workaround: mark them as absent in their next match.
+- Both athletes losing a quarterfinal or the last repechage should finish 7th, but places stop at 5th, so they get no place.
+- Athlete history lists every match fought, including poule results that were later annulled.
 - Separation is by club only. FPJ also separates by association, which the app doesn't store.
 - A manual swap changes the draw, so its code alone no longer reproduces it.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.

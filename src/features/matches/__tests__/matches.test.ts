@@ -363,6 +363,7 @@ describe('the match list', () => {
       runningKeys,
       athletes: [],
       finished: [],
+      places: [],
       contests,
     };
   }

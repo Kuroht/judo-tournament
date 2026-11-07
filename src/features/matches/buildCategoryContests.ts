@@ -11,7 +11,7 @@
 import type { CategoryFormat } from '@/features/categories';
 import { splitIntoTwoPoules } from '@/lib/brackets/pouleSchedule';
 import {
-  resolveBracket,
+  resolveBracketWithPlaces,
   type BracketMatch,
   type BracketResult,
   type BracketResults,
@@ -19,7 +19,8 @@ import {
 import { getTwoPoulesFinals } from '@/lib/brackets/twoPoulesFinals';
 
 import { buildPouleContests, type PouleTools } from './buildPouleContests';
-import type { Contest, ContestAthlete, FinishedMatch } from './types';
+import { fromBracketPlaces, fromPouleOrder, getTwoPoulesPlaces } from './categoryPlaces';
+import type { Contest, ContestAthlete, ContestPlace, FinishedMatch } from './types';
 
 // A single poule gives medals to its top three. Two poules send their top two onward.
 const PLACES_NEEDED_IN_ONE_POULE = 3;
@@ -62,6 +63,18 @@ export function buildCategoryContests(
   athletes: readonly ContestAthlete[],
   finished: readonly FinishedMatch[],
 ): Contest[] {
+  return resolveCategory(format, athletes, finished).contests;
+}
+
+/**
+ * Does the same as buildCategoryContests, and also says who has finished where.
+ * @returns the contests, and the places known so far
+ */
+export function resolveCategory(
+  format: CategoryFormat,
+  athletes: readonly ContestAthlete[],
+  finished: readonly FinishedMatch[],
+): { contests: Contest[]; places: ContestPlace[] } {
   const byPosition = new Map(athletes.map((athlete) => [athlete.position, athlete]));
   const athleteAt = (position: number) => byPosition.get(position) ?? null;
   const positionOf = (entryId: string) =>
@@ -96,6 +109,7 @@ export function buildCategoryContests(
       blue,
       isFinished: match !== undefined,
       winnerEntryId: match?.winnerEntryId ?? null,
+      resultType: match?.resultType ?? null,
     };
   }
 
@@ -107,7 +121,12 @@ export function buildCategoryContests(
   }
 
   if (format !== 'poule' && format !== 'twoPoules') {
-    return resolveBracket(athletes.length, format, results).map(fromBracketMatch);
+    const bracket = resolveBracketWithPlaces(athletes.length, format, results);
+
+    return {
+      contests: bracket.matches.map(fromBracketMatch),
+      places: fromBracketPlaces(bracket.places),
+    };
   }
 
   /** Builds the tools for one poule. A poule is named A or B only if there are two. */
@@ -123,13 +142,15 @@ export function buildCategoryContests(
   const positions = athletes.map((athlete) => athlete.position).sort((a, b) => a - b);
 
   if (format === 'poule') {
-    return buildPouleContests(
+    const poule = buildPouleContests(
       positions,
       'poule-A',
       false,
       PLACES_NEEDED_IN_ONE_POULE,
       toolsFor(null),
-    ).contests;
+    );
+
+    return { contests: poule.contests, places: fromPouleOrder(poule.order, poule.tiedGroups) };
   }
 
   const [membersA, membersB] = splitIntoTwoPoules(positions);
@@ -147,13 +168,31 @@ export function buildCategoryContests(
     PLACES_NEEDED_IN_TWO_POULES,
     toolsFor('B'),
   );
-  const finals = getTwoPoulesFinals(
-    [pouleA.order?.[0] ?? null, pouleA.order?.[1] ?? null],
-    [pouleB.order?.[0] ?? null, pouleB.order?.[1] ?? null],
-    results,
-  );
+  // Once a poule is decided, a missing place means withdrawals left nobody to fill it.
+  const placeIn = (order: readonly number[] | null, index: number): number | 'nobody' | null => {
+    if (order === null) {
+      return null;
+    }
 
-  return [...pouleA.contests, ...pouleB.contests, ...finals.map(fromBracketMatch)];
+    return index < order.length ? (order[index] ?? null) : 'nobody';
+  };
+  const firstOfA = placeIn(pouleA.order, 0);
+  const secondOfA = placeIn(pouleA.order, 1);
+  const firstOfB = placeIn(pouleB.order, 0);
+  const secondOfB = placeIn(pouleB.order, 1);
+  const finals = getTwoPoulesFinals([firstOfA, secondOfA], [firstOfB, secondOfB], results).map(
+    fromBracketMatch,
+  );
+  // With nobody to fight in a semifinal, the other athlete goes straight to the final.
+  const byeFinalists = [
+    secondOfB === 'nobody' ? firstOfA : null,
+    secondOfA === 'nobody' ? firstOfB : null,
+  ].filter((athlete) => typeof athlete === 'number');
+
+  return {
+    contests: [...pouleA.contests, ...pouleB.contests, ...finals],
+    places: getTwoPoulesPlaces(finals, byeFinalists),
+  };
 }
 
 /**

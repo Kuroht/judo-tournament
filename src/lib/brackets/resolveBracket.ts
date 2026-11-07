@@ -19,7 +19,8 @@ export type BracketResult = {
   blue: number;
   // 'none' means both athletes lost, such as a double hansoku-make.
   winner: 'white' | 'blue' | 'none';
-  // FPJ Articles 43.2 and 45.2: a no-show or unsporting loser can't be repechaged.
+  // FPJ Article 43.2: a no-show can't be repechaged. Article 45.2 says the same of an
+  // unsporting hansoku-make, but the match screen can't record that kind of hansoku-make yet.
   isLoserOut?: boolean;
 };
 
@@ -40,6 +41,18 @@ type Outcome = number | 'nobody' | 'pending';
 
 type PoolMatch = { pool: PoolName; isQuarterFinal: boolean; winner: Outcome; loser: Outcome };
 
+/** Who finished where, as draw positions. Places can be shared, as with two 3rds. */
+export type BracketPlaces = {
+  first: number[];
+  second: number[];
+  third: number[];
+  fifth: number[];
+};
+
+function onlyAthletes(outcomes: readonly (number | string | null)[]): number[] {
+  return outcomes.filter((outcome): outcome is number => typeof outcome === 'number');
+}
+
 /**
  * Works out every contest of a bracket from the results so far. If an earlier result
  * is edited, a later result between athletes who no longer meet is simply ignored,
@@ -56,7 +69,22 @@ export function resolveBracket(
   format: EliminationFormat,
   results: BracketResults,
 ): BracketMatch[] {
+  return resolveBracketWithPlaces(athleteCount, format, results).matches;
+}
+
+/**
+ * Does the same as resolveBracket, and also says who has finished where. A walkover isn't
+ * a contest, so a medal won by one can only be found here, not in the list of matches.
+ * @returns the contests, and the places known so far. They're only final when every
+ *          contest has finished.
+ */
+export function resolveBracketWithPlaces(
+  athleteCount: number,
+  format: EliminationFormat,
+  results: BracketResults,
+): { matches: BracketMatch[]; places: BracketPlaces } {
   const matches: BracketMatch[] = [];
+  const places: BracketPlaces = { first: [], second: [], third: [], fifth: [] };
   const poolMatches: PoolMatch[] = [];
 
   /** Plays one match if it can, and says who won and who lost. */
@@ -151,8 +179,37 @@ export function resolveBracket(
     round += 1;
   }
 
+  /** Finds the athletes who both lost a contest of this kind (IJF Article 18.3.1). */
+  function bothLostIn(part: BracketPart): number[] {
+    const bothLost = matches.filter((match) => {
+      const result = results[match.key];
+
+      return (
+        match.part === part &&
+        result?.winner === 'none' &&
+        result.white === match.white &&
+        result.blue === match.blue
+      );
+    });
+
+    return onlyAthletes(bothLost.flatMap((match) => [match.white, match.blue]));
+  }
+
+  // After the last round, only the winner of the final is left on the sheet.
+  places.first.push(...onlyAthletes(sheet));
+  const final = matches.find((match) => match.part === 'final');
+  if (final !== undefined && final.winner !== null) {
+    places.second.push(...onlyAthletes([final.winner === final.white ? final.blue : final.white]));
+  }
+  // FPJ Article 45.3: both losing a final makes them both 2nd. In a semifinal, both 5th.
+  places.second.push(...bothLostIn('final'));
+  places.fifth.push(...bothLostIn('semiFinal'));
+
   if (format === 'directKnockout') {
-    return matches;
+    // With no bronze contests, both semifinal losers finish 3rd.
+    places.third.push(...onlyAthletes(semiFinalLosers));
+
+    return { matches, places };
   }
 
   // ---------------------------------------------
@@ -189,8 +246,11 @@ export function resolveBracket(
   const tableTwo = play('rep-table-2', 'repechage', null, fromC, fromD).winner;
 
   // 4. Each side meets the semifinal loser from the opposite half of the sheet.
-  play('bronze-1', 'bronze', null, tableOne, semiFinalLosers[1] ?? 'nobody');
-  play('bronze-2', 'bronze', null, tableTwo, semiFinalLosers[0] ?? 'nobody');
+  const bronzeOne = play('bronze-1', 'bronze', null, tableOne, semiFinalLosers[1] ?? 'nobody');
+  const bronzeTwo = play('bronze-2', 'bronze', null, tableTwo, semiFinalLosers[0] ?? 'nobody');
 
-  return matches;
+  places.third.push(...onlyAthletes([bronzeOne.winner, bronzeTwo.winner]));
+  places.fifth.push(...onlyAthletes([bronzeOne.loser, bronzeTwo.loser]), ...bothLostIn('bronze'));
+
+  return { matches, places };
 }

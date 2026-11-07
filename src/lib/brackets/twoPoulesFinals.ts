@@ -13,16 +13,17 @@ type Outcome = number | 'nobody' | 'pending';
 
 /**
  * Works out the semifinals and final from the poule standings.
- * @param pouleA the first and second of poule A, or null while not known
- * @param pouleB the first and second of poule B, or null while not known
+ * @param pouleA the first and second of poule A, null while not known, or 'nobody' if
+ *               withdrawals leave no athlete for that place
+ * @param pouleB the first and second of poule B, in the same way
  * @param results the results so far, by match key
  * @returns the contests. Both semifinal losers finish 3rd, so there is no bronze contest.
  *          If both athletes lose a semifinal, the other semifinal's winner has no final
  *          to fight, so no final is listed.
  */
 export function getTwoPoulesFinals(
-  pouleA: readonly [number | null, number | null],
-  pouleB: readonly [number | null, number | null],
+  pouleA: readonly [number | 'nobody' | null, number | 'nobody' | null],
+  pouleB: readonly [number | 'nobody' | null, number | 'nobody' | null],
   results: BracketResults,
 ): BracketMatch[] {
   const matches: BracketMatch[] = [];

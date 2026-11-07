@@ -32,7 +32,55 @@ type PouleOutcome = {
   contests: Contest[];
   // The positions, best first. Null until the poule and its ties have been decided.
   order: number[] | null;
+  // Athletes left tied because it decides nothing, so that they can share a place.
+  tiedGroups: number[][];
 };
+
+/**
+ * Finds the athletes eliminated by not turning up (FPJ Article 43.3) or by withdrawing
+ * (Article 44). Their results are annulled, unless they withdrew in their last match.
+ * @param pairs the poule's schedule
+ * @param positions the draw positions taking part
+ * @param contestAt gives the contest at a place in the schedule
+ * @param tools what is needed from the category
+ * @returns their draw positions
+ */
+function findOutAthletes(
+  pairs: readonly (readonly [number, number])[],
+  positions: readonly number[],
+  contestAt: (index: number, white: number, blue: number) => Contest,
+  tools: PouleTools,
+): number[] {
+  const toPositions = (pair: readonly [number, number]): [number, number] => [
+    positions[pair[0] - 1] ?? 0,
+    positions[pair[1] - 1] ?? 0,
+  ];
+  const out: number[] = [];
+
+  pairs.forEach((pair, index) => {
+    const [white, blue] = toPositions(pair);
+    const match = tools.findFinished(contestAt(index, white, blue));
+    if (match === undefined || match.winnerEntryId === null) {
+      return;
+    }
+
+    const loser = match.winnerEntryId === match.whiteEntryId ? blue : white;
+    // A later match only counts if it can still happen, so not against someone who is out.
+    const hasMoreMatches = pairs.slice(index + 1).some((other) => {
+      const later = toPositions(other);
+
+      return later.includes(loser) && !later.some((position) => out.includes(position));
+    });
+    // Between two athletes there are no other results to annul, so the loser stays 2nd.
+    const canBeAnnulled = positions.length > 2 && hasMoreMatches;
+
+    if (match.resultType === 'fusenGachi' || (match.resultType === 'kikenGachi' && canBeAnnulled)) {
+      out.push(loser);
+    }
+  });
+
+  return out;
+}
 
 /** Turns a finished match into a result for the ranking, using draw positions. */
 function toPouleResult(match: FinishedMatch, white: number, blue: number): PouleResult {
@@ -76,6 +124,10 @@ export function buildPouleContests(
     (number) => athleteAt(positions[number - 1] ?? 0)?.clubId ?? null,
   );
 
+  const contestAt = (index: number, white: number, blue: number) =>
+    makeContest(`${keyPrefix}-${index + 1}`, athleteAt(white), athleteAt(blue), isPlayoff);
+  const outPositions = findOutAthletes(pairs, positions, contestAt, tools);
+
   const contests: Contest[] = [];
   const results: PouleResult[] = [];
   const wins = new Map<number, number>();
@@ -92,13 +144,14 @@ export function buildPouleContests(
       return;
     }
 
-    const contest = makeContest(
-      `${keyPrefix}-${index + 1}`,
-      athleteAt(white),
-      athleteAt(blue),
-      isPlayoff,
-    );
+    const contest = contestAt(index, white, blue);
     const match = findFinished(contest);
+
+    // An eliminated athlete fights no more, so those matches simply don't happen.
+    if (match === undefined && (outPositions.includes(white) || outPositions.includes(blue))) {
+      return;
+    }
+
     contests.push(contest);
 
     if (match === undefined) {
@@ -115,16 +168,20 @@ export function buildPouleContests(
   });
 
   if (!isComplete) {
-    return { contests, order: null };
+    return { contests, order: null, tiedGroups: [] };
   }
 
   const athletes = positions.map((position) => ({
     position,
     weighedKg: athleteAt(position)?.weighedKg ?? null,
   }));
-  const standings = rankPoule(athletes, results, true);
+  // An eliminated athlete gets no place at all, so they're left out of the order.
+  const standings = rankPoule(athletes, results, true, outPositions).filter(
+    (standing) => !standing.isOut,
+  );
   const places = [...new Set(standings.map((standing) => standing.place))];
   const order: number[] = [];
+  const tiedGroups: number[][] = [];
   let isDecided = true;
 
   for (const place of places) {
@@ -134,6 +191,9 @@ export function buildPouleContests(
 
     if (tied.length === 1 || place > placesNeeded) {
       order.push(...tied);
+      if (tied.length > 1) {
+        tiedGroups.push(tied);
+      }
       continue;
     }
 
@@ -149,6 +209,7 @@ export function buildPouleContests(
       tools,
     );
     contests.push(...playoff.contests);
+    tiedGroups.push(...playoff.tiedGroups);
     if (playoff.order === null) {
       isDecided = false;
     } else {
@@ -156,5 +217,5 @@ export function buildPouleContests(
     }
   }
 
-  return { contests, order: isDecided ? order : null };
+  return { contests, order: isDecided ? order : null, tiedGroups };
 }

@@ -47,6 +47,10 @@ export function TournamentStepButtons({ tournament }: TournamentStepButtonsProps
         label={t('matches.title')}
         onPress={() => router.push({ pathname: '/tournament/[id]/matches', params })}
       />
+      <Button
+        label={t('results.title')}
+        onPress={() => router.push({ pathname: '/tournament/[id]/results', params })}
+      />
     </>
   );
 }

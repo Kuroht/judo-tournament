@@ -11,7 +11,7 @@ import type { SQLiteDatabase } from 'expo-sqlite';
 
 import type { CategoryFormat } from '@/features/categories';
 
-import { buildCategoryContests } from '../buildCategoryContests';
+import { resolveCategory } from '../buildCategoryContests';
 import type { CategoryContests, ContestAthlete, FinishedMatch } from '../types';
 
 type CategoryRow = {
@@ -75,7 +75,9 @@ export async function getCategoryContests(
   );
 
   const isReady = category.isLocked === 1 && athletes.length === category.drawnEntryCount;
-  const contests = isReady ? buildCategoryContests(category.format, athletes, finished) : [];
+  const { contests, places } = isReady
+    ? resolveCategory(category.format, athletes, finished)
+    : { contests: [], places: [] };
   // A running match only counts if these are still its athletes. After a result is
   // corrected, the later contests can have changed.
   const runningKeys = contests
@@ -98,6 +100,7 @@ export async function getCategoryContests(
     athletes,
     finished,
     contests,
+    places,
   };
 }
 

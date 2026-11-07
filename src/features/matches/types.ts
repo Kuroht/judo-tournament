@@ -41,6 +41,13 @@ export type Contest = {
   blue: ContestAthlete | null;
   isFinished: boolean;
   winnerEntryId: string | null;
+  resultType: ResultType | null;
+};
+
+/** Where one athlete finished, by draw position. Places can be shared. */
+export type ContestPlace = {
+  position: number;
+  place: number;
 };
 
 export type CategoryContests = {
@@ -53,6 +60,8 @@ export type CategoryContests = {
   athletes: ContestAthlete[];
   finished: FinishedMatch[];
   contests: Contest[];
+  // Only final once every contest has finished.
+  places: ContestPlace[];
 };
 
 /** A match's saved row. */
