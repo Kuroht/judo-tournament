@@ -19,17 +19,17 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 
 ## Known issues
 
-### Critical: never run on Android
+### Critical: Android only lightly tested
 
-Every step so far has only been tested on web. The Android bundle builds, but the app has never run on a tablet or emulator. **Do not rely on it at a tournament until this is done.**
+The project owner ran steps 1 to 7 on Android with Expo Go for SDK 57, and reported that it worked. Automated tests still only cover web and logic. It hasn't yet run as an installed build, so **do not rely on it at a tournament until it has**.
 
-Check these first, because they can't be tested on web or were only checked by reading the code:
+Confirmed on Android by the project owner: the database and FPJ data, settings surviving a restart, the big weight text, the category list inside the weigh-in dialog, form fields staying above the keyboard, and the keyboard opening by itself in the weigh-in dialog.
 
-- SQLite on Android, which uses different code from the browser version.
-- The on-screen keyboard: the search box in the option picker, and reaching fields on the form screens.
+Still to confirm on the device:
+
+- The search box in the option picker staying above the keyboard.
 - Long club names wrapping in the option picker.
 - **Try again** on the error screen, which retries in place on Android and reloads the page on web.
-- In the weigh-in dialog: the category list opening inside it (a modal inside a modal), the keyboard opening by itself, and the big weight text not being clipped.
 - Accented text search and sorting (`normalize` and `localeCompare`).
 - Working in airplane mode from an installed build. A development build still needs the computer.
 

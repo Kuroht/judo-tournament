@@ -6,7 +6,7 @@
  * USED BY: WeighDialog.tsx
  * =====================================================
  */
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Text, TextInput } from 'react-native';
 
 import { Button } from '@/components/Button';
@@ -14,6 +14,9 @@ import { useLanguage } from '@/lib/i18n/useLanguage';
 import { useT } from '@/lib/i18n/useT';
 
 import { formatKg, parseWeightInput } from '../weightRules';
+
+// Long enough for an Android dialog to finish opening, but too short to notice.
+const FOCUS_DELAY_MS = 300;
 
 type WeightInputProps = {
   savedKg: number | null;
@@ -26,6 +29,20 @@ export function WeightInput({ savedKg, isBusy, onSave }: WeightInputProps) {
   const { language } = useLanguage();
   const [text, setText] = useState(savedKg === null ? '' : formatKg(savedKg, language));
   const [isInvalid, setIsInvalid] = useState(false);
+  const inputRef = useRef<TextInput>(null);
+
+  // Ready to type straight away, but not when reviewing an existing result. The
+  // autoFocus prop doesn't open the keyboard inside a Modal on Android, because the
+  // dialog's window isn't ready yet, so we wait a moment and then focus the input.
+  useEffect(() => {
+    if (savedKg !== null) {
+      return;
+    }
+
+    const timer = setTimeout(() => inputRef.current?.focus(), FOCUS_DELAY_MS);
+
+    return () => clearTimeout(timer);
+  }, [savedKg]);
 
   function handleSave() {
     const kg = parseWeightInput(text);
@@ -38,13 +55,12 @@ export function WeightInput({ savedKg, isBusy, onSave }: WeightInputProps) {
   return (
     <>
       <TextInput
+        ref={inputRef}
         accessibilityLabel={t('weighIn.weightLabel')}
         value={text}
         onChangeText={setText}
         keyboardType="decimal-pad"
         maxLength={7}
-        // Ready to type straight away, but not when reviewing an existing result.
-        autoFocus={savedKg === null}
         className="min-h-20 rounded-lg border border-slate-400 bg-white text-center text-5xl font-bold text-slate-900 dark:border-slate-500 dark:bg-slate-800 dark:text-slate-100"
       />
       {isInvalid && (
