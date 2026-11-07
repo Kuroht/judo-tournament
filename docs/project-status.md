@@ -35,7 +35,7 @@ Check these first, because they can't be tested on web or were only checked by r
 
 ### Expo Go may refuse the project
 
-The project uses SDK 57, and Expo Go usually targets the newest SDK. If it reports an incompatible version, use a development build. This hasn't been tested.
+The project uses SDK 57, but Expo Go from the Play Store is for SDK 58 and refuses it. Uninstall that one, install the [Expo Go for SDK 57](https://expo.dev/go?sdkVersion=57&platform=android&device=true), and avoid updating it from the Play Store. Expo Go is only for testing, and still needs the computer. A tournament needs an installed build.
 
 ### Web: the database file can only be open once
 
@@ -60,10 +60,8 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - A sex with no weight templates gets a free group. This can't happen until templates are editable.
 - Age classes and FPJ weight templates can't be edited in the app yet. Planned for step 14.
 - New FPJ categories all start as double repechage. Step 8 should suggest a format from the athlete count.
-- `npm run lint` isn't set up, because ESLint hasn't been approved.
 - `npm test` covers the rules, weigh-in limits, registration warnings and migrations. Other checks from steps 1 to 6, including the browser workflows, were throwaway scripts and aren't in this repo.
 - The rules logic isn't used by any screen until step 10. That step must save one score per hold, when the hold ends, and must let a hold run past the end of regular time (IJF Article 8.4).
-- `tsconfig.json` relies on `@types/node`, which is only installed because other packages need it. Adding it directly needs approval.
 - A waza-ari beats any number of yuko. This follows the point values (10 and 1), but no article found says so outright for 10 or more yuko.
 - Removing a registration isn't blocked once a draw exists, because draws don't exist yet. Step 8 must add this, and must also handle athletes added after a draw.
 - Declared weight isn't asked for at registration, because the real weight is recorded at the weigh-in.
