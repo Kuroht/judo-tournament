@@ -49,9 +49,17 @@ export function useTournamentForm(tournamentId: string | null, onSaved: (id: str
   useEffect(() => {
     if (tournamentId === null) {
       // A new tournament starts with the season chosen in the settings.
-      void getSavedSeasonYear(db).then((year) =>
-        setValues((current) => ({ ...current, seasonYear: String(year) })),
-      );
+      // A slow read must not replace a year just typed, and if it fails, this year stays.
+      const untouchedYear = createEmptyValues().seasonYear;
+      getSavedSeasonYear(db)
+        .then((year) =>
+          setValues((current) =>
+            current.seasonYear === untouchedYear
+              ? { ...current, seasonYear: String(year) }
+              : current,
+          ),
+        )
+        .catch(() => undefined);
       return;
     }
 

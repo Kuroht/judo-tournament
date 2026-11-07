@@ -50,7 +50,7 @@ function buildTable(headings: readonly string[], rows: readonly (readonly string
 }
 
 function buildPage(title: string, body: string): string {
-  return `<!doctype html><html><head><meta charset="utf-8"><style>${PAGE_STYLE}</style></head><body><h1>${escapeHtml(title)}</h1>${body}</body></html>`;
+  return `<!doctype html><html><head><meta charset="utf-8"><title>${escapeHtml(title)}</title><style>${PAGE_STYLE}</style></head><body><h1>${escapeHtml(title)}</h1>${body}</body></html>`;
 }
 
 /** Names the group a contest is printed under, such as "Poule A" or "Repescagem". */

@@ -51,7 +51,7 @@ export const en: Record<TranslationKey, string> = {
   'settings.rulePresets': 'Rules by age class',
   'settings.noRulePresets': 'There are no age classes yet.',
   'settings.rulePresetSummary': '{seconds} s · Yuko: {yuko} · Golden score: {golden} · Tolerance: {grams} g',
-  'settings.rulePresetWarning': 'These rules apply to every tournament, including matches in progress and weigh-ins already done.',
+  'settings.rulePresetWarning': 'New rules apply to matches not yet started, in every tournament. Matches already started keep theirs. Tolerance applies at once to all weigh-ins, and lowering it can mean redoing draws.',
   'settings.yes': 'Yes',
   'settings.no': 'No',
   'settings.matchSeconds': 'Match length (seconds)',

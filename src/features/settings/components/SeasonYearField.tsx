@@ -14,6 +14,14 @@ export function SeasonYearField() {
   const t = useT();
   const season = useSeasonYear();
 
+  let error: string | undefined;
+  if (season.hasSaveFailed) {
+    error = t('common.saveError');
+  }
+  if (season.isInvalid) {
+    error = t('settings.seasonYearInvalid');
+  }
+
   return (
     <TextField
       label={t('settings.seasonYear')}
@@ -21,7 +29,7 @@ export function SeasonYearField() {
       onChangeText={season.change}
       keyboardType="number-pad"
       maxLength={4}
-      error={season.isInvalid ? t('settings.seasonYearInvalid') : undefined}
+      error={error}
     />
   );
 }

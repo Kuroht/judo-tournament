@@ -7,6 +7,7 @@
  * =====================================================
  */
 import { ADD_DRAW_ENTRY_COUNT_SQL } from './addDrawEntryCountMigration';
+import { ADD_MATCH_RULES_SQL } from './addMatchRulesMigration';
 import { ADD_MATCH_SCREEN_COLUMNS_SQL } from './addMatchScreenColumnsMigration';
 import { confirmYouthAgeClasses } from './confirmYouthAgeClassesMigration';
 import { CREATE_TABLES_SQL } from './createTablesMigration';
@@ -21,4 +22,5 @@ export const MIGRATIONS: readonly Migration[] = [
   { version: 3, run: confirmYouthAgeClasses },
   { version: 4, run: (db) => db.execAsync(ADD_DRAW_ENTRY_COUNT_SQL) },
   { version: 5, run: (db) => db.execAsync(ADD_MATCH_SCREEN_COLUMNS_SQL) },
+  { version: 6, run: (db) => db.execAsync(ADD_MATCH_RULES_SQL) },
 ];

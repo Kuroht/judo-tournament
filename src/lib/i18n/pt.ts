@@ -48,7 +48,7 @@ export const pt = {
   'settings.rulePresets': 'Regras por escalão',
   'settings.noRulePresets': 'Ainda não há escalões.',
   'settings.rulePresetSummary': '{seconds} s · Yuko: {yuko} · Golden Score: {golden} · Tolerância: {grams} g',
-  'settings.rulePresetWarning': 'Estas regras valem para todos os torneios, incluindo combates a decorrer e pesagens já feitas.',
+  'settings.rulePresetWarning': 'As regras novas valem para os combates ainda não começados, em todos os torneios. Os combates já começados mantêm as suas. A tolerância vale logo para todas as pesagens, e baixá-la pode obrigar a refazer sorteios.',
   'settings.yes': 'Sim',
   'settings.no': 'Não',
   'settings.matchSeconds': 'Duração do combate (segundos)',

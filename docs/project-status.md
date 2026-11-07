@@ -74,6 +74,7 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Changing a category's format removes its draw, because a draw only keeps clubs apart for the format it was made for.
 - The hold timer runs on its own, and pausing the main clock doesn't pause it, so sono-mama isn't handled.
 - After a correction changes a later contest's athletes, opening that contest sets its old result aside for good, even if another correction brings the same athletes back. The row stays in the database, with an empty `matchKey`.
+- Each match keeps a copy of the rules it started under, so changing an age class only affects new matches. Weigh-in tolerance is different: it applies at once. Lowering it after a draw can make an athlete fail, so that draw goes out of date, and the draw list's count can briefly disagree until it's redone.
 - A migration that changes a table must also update `backupTables.ts` and add a step in `migrateBackup.ts`. `backupDatabase.test.ts` fails if a table or column is left out.
 - `backupFiles.ts` (the Android file handling) has only been type-checked and reviewed, not run. Test export, import and restoring on the tablet.
 - If a backup breaks a UNIQUE or foreign key rule, the import rolls back safely, but the message shows SQLite's own wording.

@@ -17,9 +17,13 @@ export function useSeasonYear() {
   const db = useSQLiteContext();
   const [text, setText] = useState('');
   const [isInvalid, setIsInvalid] = useState(false);
+  const [hasSaveFailed, setHasSaveFailed] = useState(false);
 
   useEffect(() => {
-    void getSavedSeasonYear(db).then((year) => setText(String(year)));
+    getSavedSeasonYear(db)
+      // Only fills an empty field, so a slow read can't replace what was just typed.
+      .then((year) => setText((current) => (current === '' ? String(year) : current)))
+      .catch(() => setHasSaveFailed(true));
   }, [db]);
 
   function change(newText: string) {
@@ -27,10 +31,11 @@ export function useSeasonYear() {
 
     setText(newText);
     setIsInvalid(year === null);
+    setHasSaveFailed(false);
     if (year !== null) {
-      void saveSeasonYear(db, year);
+      saveSeasonYear(db, year).catch(() => setHasSaveFailed(true));
     }
   }
 
-  return { text, isInvalid, change };
+  return { text, isInvalid, hasSaveFailed, change };
 }

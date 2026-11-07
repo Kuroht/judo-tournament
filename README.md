@@ -23,9 +23,9 @@ The data lives only on the tablet. **If the tablet is lost or the app is uninsta
 
 - **After every tournament:** go to **Definições → Exportar e importar dados → Exportar tudo**, and save the file somewhere off the tablet, such as Drive or email.
 - **To restore:** on the same screen, tap **Escolher um ficheiro**, check the preview, then choose:
-  - **Juntar** only adds. What's already on the tablet stays as it is.
+  - **Juntar aos dados deste tablet** only adds. What's already on the tablet stays as it is.
   - **Substituir tudo** swaps everything for the file's contents. A copy is saved first, which you can bring back with **Repor uma cópia automática**.
-- **To move one tournament to another tablet:** use **Exportar: {tournament}**, then **Juntar** on the other tablet.
+- **To move one tournament to another tablet:** use **Exportar: {tournament}**, then **Juntar aos dados deste tablet** on the other tablet.
 
 ## Running it on your computer
 
@@ -55,7 +55,7 @@ The first time, it asks for an Android package name, such as `com.yourname.judot
 
 When it finishes, it gives you a link to the APK. Open it on the tablet and install it, allowing installs from that source if asked.
 
-**To update:** raise `version` in `app.json`, build again and install over the old app. Your data stays, but export it first anyway.
+**To update:** in `app.json`, raise `version` and add 1 to `android.versionCode`, build again and install over the old app. Your data stays, but export it first anyway. **Never uninstall the old app to get past an install error, because that deletes all its data.** Android refuses an update if `versionCode` isn't higher.
 
 **After installing, do a full test with airplane mode on,** because this is the first time the app runs without your computer.
 

@@ -197,6 +197,17 @@ describe('validateBackup', () => {
   });
 });
 
+describe('upgrading a real older backup', () => {
+  it('reads a version 5 file, whose matches have no saved rules', () => {
+    const data = twoTournaments();
+    data.matches = data.matches.map(({ rulesJson: _rulesJson, ...match }) => match);
+    const check = validateBackup(fileWith({ schemaVersion: 5 }, data), 6);
+
+    expect(check.type === 'valid' && check.backup.data.matches[0]?.rulesJson).toBeNull();
+    expect(check.type === 'valid' && check.backup.schemaVersion).toBe(6);
+  });
+});
+
 describe('migrateBackup', () => {
   it('runs every step in order', () => {
     const steps = {

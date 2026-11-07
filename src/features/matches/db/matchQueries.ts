@@ -16,6 +16,7 @@ import type { MatchEvent, ResultType, RuleSet, Side, SideScore } from '@/lib/rul
 
 import { countDependentMatches } from '../buildCategoryContests';
 import { fromEventRow, toEventRow, type MatchEventRow } from '../matchEventRows';
+import { readSavedRules } from '../savedRules';
 import type { Contest, MatchData, MatchRow, SavedEvent } from '../types';
 import { getCategoryContests } from './contestQueries';
 
@@ -73,7 +74,8 @@ async function getCategoryRules(db: SQLiteDatabase, categoryId: string): Promise
 }
 
 const SELECT_MATCH = `SELECT id, matchKey, whiteEntryId, blueEntryId, status, resultType,
-  winnerEntryId, clockElapsedSeconds, clockStartedAtMs, osaekomiSide, osaekomiStartedAtMs
+  winnerEntryId, clockElapsedSeconds, clockStartedAtMs, osaekomiSide, osaekomiStartedAtMs,
+  rulesJson
   FROM matches WHERE categoryId = ? AND matchKey = ?`;
 
 /**
@@ -106,8 +108,8 @@ async function getOrCreateMatchRow(
     // the contest, so they aren't used.
     await db.runAsync(
       `INSERT INTO matches (id, categoryId, round, slot, bracketPart, matchKey, whiteEntryId,
-         blueEntryId, clockElapsedSeconds)
-       VALUES (?, ?, 0, 0, ?, ?, ?, ?, ?)`,
+         blueEntryId, clockElapsedSeconds, rulesJson)
+       VALUES (?, ?, 0, 0, ?, ?, ?, ?, ?, ?)`,
       [
         createId(),
         categoryId,
@@ -117,6 +119,8 @@ async function getOrCreateMatchRow(
         blueEntryId,
         // A tie's new contest is all golden score, whose clock starts after regular time.
         contest.isPlayoff ? rules.matchSeconds : 0,
+        // A match keeps the rules it started under, even if the age class changes later.
+        JSON.stringify(rules),
       ],
     );
   });
@@ -170,7 +174,7 @@ export async function getMatchData(
     contest,
     white: contest.white,
     blue: contest.blue,
-    rules,
+    rules: readSavedRules(row.rulesJson, rules),
     events,
     dependentCount: countDependentMatches(
       category.format,

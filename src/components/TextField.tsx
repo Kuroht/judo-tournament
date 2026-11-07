@@ -45,7 +45,12 @@ export function TextField({
         className={`min-h-12 rounded-lg border bg-white px-3 py-2 text-lg text-slate-900 dark:bg-slate-800 dark:text-slate-100 ${borderClass}`}
       />
       {error !== undefined && (
-        <Text className="text-base font-semibold text-red-700 dark:text-red-300">{error}</Text>
+        <Text
+          accessibilityLiveRegion="polite"
+          className="text-base font-semibold text-red-700 dark:text-red-300"
+        >
+          {error}
+        </Text>
       )}
     </View>
   );

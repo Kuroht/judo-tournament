@@ -12,10 +12,30 @@ import { OLDEST_BACKUP_VERSION } from './backupTables';
 // afterward, so a step must not assume anything about its shape.
 type BackupStep = (data: unknown) => unknown;
 
+/** Version 6 keeps each match's rules. An older match has none, so it uses today's. */
+function addEmptyMatchRules(data: unknown): unknown {
+  if (typeof data !== 'object' || data === null) {
+    return data;
+  }
+
+  const { matches } = data as { matches?: unknown };
+  if (!Array.isArray(matches)) {
+    return data;
+  }
+
+  return {
+    ...data,
+    matches: matches.map((match: unknown) =>
+      typeof match === 'object' && match !== null ? { ...match, rulesJson: null } : match,
+    ),
+  };
+}
+
 // RULE: when a migration changes a table in a backup, add a step here too. The key is
 // the version the step upgrades FROM. For example, 5 turns a version 5 backup into 6.
-// There are none yet, because version 5 is the first version with backups.
-const BACKUP_STEPS: Readonly<Record<number, BackupStep>> = {};
+const BACKUP_STEPS: Readonly<Record<number, BackupStep>> = {
+  5: addEmptyMatchRules,
+};
 
 /**
  * Upgrades a backup's data, one version at a time.

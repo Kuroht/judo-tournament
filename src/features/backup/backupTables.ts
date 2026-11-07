@@ -201,6 +201,7 @@ export const BACKUP_TABLES: readonly BackupTable[] = [
       matchKey: 'textOrNull',
       osaekomiSide: 'textOrNull',
       osaekomiStartedAtMs: 'numberOrNull',
+      rulesJson: 'textOrNull',
     },
   },
   {

@@ -11,6 +11,7 @@ import { buildRuleSet } from '@/lib/rules/buildRuleSet';
 import type { MatchEvent } from '@/lib/rules/types';
 
 import { getClockAfterEvent, getDueAction } from '../matchTick';
+import { readSavedRules } from '../savedRules';
 
 const RULES = buildRuleSet(
   {
@@ -26,6 +27,25 @@ const RULES = buildRuleSet(
 const NO_HOLD = { side: null, startedAtMs: null };
 const PAUSED = { elapsedSeconds: 0, startedAtMs: null };
 const FRESH = createMatchState();
+
+describe('readSavedRules', () => {
+  const current = { ...RULES, matchSeconds: 999 };
+
+  it("uses the rules saved on the match, not today's", () => {
+    expect(readSavedRules(JSON.stringify(RULES), current)).toEqual(RULES);
+  });
+
+  it("uses today's rules for a match from before rules were saved", () => {
+    expect(readSavedRules(null, current)).toBe(current);
+  });
+
+  it.each(['not json', 'null', '{}', '{"matchSeconds":"long"}'])(
+    "uses today's rules if the saved copy is %s",
+    (text) => {
+      expect(readSavedRules(text, current)).toBe(current);
+    },
+  );
+});
 
 describe('getDueAction', () => {
   it('does nothing while time remains', () => {

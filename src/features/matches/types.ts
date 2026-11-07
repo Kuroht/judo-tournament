@@ -77,6 +77,8 @@ export type MatchRow = {
   clockStartedAtMs: number | null;
   osaekomiSide: Side | null;
   osaekomiStartedAtMs: number | null;
+  // A copy of the rules this match started under. Null if it's from before they were saved.
+  rulesJson: string | null;
 };
 
 /** One saved event, with the time on the clock when it happened. */
