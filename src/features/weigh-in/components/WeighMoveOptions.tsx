@@ -65,7 +65,7 @@ export function WeighMoveOptions({
         />
       )}
       {entry.status === 'failed' && suggestion === null && (
-        <Text className="text-base text-slate-700 dark:text-slate-200">
+        <Text className="text-base text-stone-700 dark:text-stone-200">
           {t('weighIn.noSuggestion')}
         </Text>
       )}

@@ -42,7 +42,7 @@ export function RulePresetFormScreen({ id }: RulePresetFormScreenProps) {
   return (
     <Screen>
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 pb-6">
-        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-100">{form.name}</Text>
+        <Text className="text-2xl font-bold text-stone-900 dark:text-stone-100">{form.name}</Text>
         {/* Rules aren't copied into tournaments, so a change reaches all of them. */}
         <Text className="text-base font-semibold text-amber-800 dark:text-amber-300">
           {`⚠ ${t('settings.rulePresetWarning')}`}

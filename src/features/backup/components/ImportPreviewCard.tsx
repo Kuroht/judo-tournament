@@ -31,18 +31,18 @@ export function ImportPreviewCard(props: ImportPreviewCardProps) {
   const canReplace = backup.scope === 'all';
 
   return (
-    <View className="gap-3 rounded-xl border-4 border-amber-600 bg-white p-4 dark:bg-slate-800">
-      <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+    <View className="gap-3 rounded-xl border-4 border-amber-600 bg-white p-4 dark:bg-stone-800">
+      <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
         {t('backup.previewTitle', { date: backup.exportedAt.slice(0, 10) })}
       </Text>
-      <Text className="text-lg text-slate-900 dark:text-slate-100">
+      <Text className="text-lg text-stone-900 dark:text-stone-100">
         {t('backup.fileHas', {
           clubs: backup.data.clubs.length,
           athletes: backup.data.athletes.length,
           tournaments: backup.data.tournaments.length,
         })}
       </Text>
-      <Text className="text-base text-slate-700 dark:text-slate-200">
+      <Text className="text-base text-stone-700 dark:text-stone-200">
         {t('backup.mergeExplain', {
           clubs: mergePlan.toAdd.clubs.length,
           athletes: mergePlan.toAdd.athletes.length,
@@ -59,7 +59,7 @@ export function ImportPreviewCard(props: ImportPreviewCardProps) {
           onPress={() => setIsConfirmingReplace(true)}
         />
       ) : (
-        <Text className="text-base text-slate-700 dark:text-slate-200">
+        <Text className="text-base text-stone-700 dark:text-stone-200">
           {t('backup.tournamentMergeOnly')}
         </Text>
       )}

@@ -52,7 +52,7 @@ export function AthleteFormFields({ values, errors, onChange }: AthleteFormField
         maxLength={4}
       />
       <View className="gap-1">
-        <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
           {t('athletes.sex')}
         </Text>
         <View className="flex-row gap-2">

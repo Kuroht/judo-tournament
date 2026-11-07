@@ -1,15 +1,15 @@
 /**
  * =====================================================
  * FILE: TournamentOverviewScreen.tsx
- * PURPOSE: The home of one tournament: its details, and
- *          where to go next.
+ * PURPOSE: A tournament's home page: its details, and the
+ *          journey through it with the next step first.
  * USED BY: src/app/tournament/[id]/overview.tsx
  * =====================================================
  */
 import { useRouter } from 'expo-router';
 import { ScrollView, Text } from 'react-native';
 
-import { Button } from '@/components/Button';
+import { Banner } from '@/components/Banner';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { Screen } from '@/components/Screen';
 import { useGoBack } from '@/hooks/useGoBack';
@@ -17,7 +17,8 @@ import { useT } from '@/lib/i18n/useT';
 
 import { useTournamentOverview } from '../hooks/useTournamentOverview';
 import { formatDisplayDate } from '../tournamentDate';
-import { TournamentStepButtons } from './TournamentStepButtons';
+import { TournamentManageOptions } from './TournamentManageOptions';
+import { TournamentStepList } from './TournamentStepList';
 
 type TournamentOverviewScreenProps = {
   tournamentId: string;
@@ -47,7 +48,7 @@ export function TournamentOverviewScreen({ tournamentId }: TournamentOverviewScr
     return <FullScreenMessage title={t('common.notFound')} />;
   }
 
-  const details = tournament.data;
+  const { details, progress } = tournament.data;
   const parts = [
     formatDisplayDate(details.date),
     details.place,
@@ -57,42 +58,27 @@ export function TournamentOverviewScreen({ tournamentId }: TournamentOverviewScr
   return (
     <Screen>
       <ScrollView contentContainerClassName="gap-3 pb-6">
-        <Text className="text-2xl font-bold text-slate-900 dark:text-slate-100">
+        <Text
+          accessibilityRole="header"
+          className="text-3xl font-bold text-stone-900 dark:text-stone-100"
+        >
           {details.name}
         </Text>
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-600 dark:text-stone-300">
           {parts.filter((part) => part !== null).join(' · ')}
         </Text>
-        {details.isArchived && (
-          <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
-            {t('tournaments.isArchivedNote')}
-          </Text>
-        )}
-        <TournamentStepButtons tournament={details} />
-        <Button
-          label={t('tournaments.edit')}
-          variant="secondary"
-          onPress={() =>
+        {details.isArchived && <Banner message={t('tournaments.isArchivedNote')} />}
+        {overview.hasActionFailed && <Banner tone="error" message={t('common.saveError')} />}
+        <TournamentStepList tournamentId={tournamentId} progress={progress} />
+        <TournamentManageOptions
+          isArchived={details.isArchived}
+          isBusy={overview.isBusy}
+          onEdit={() =>
             router.push({ pathname: '/tournament/[id]/edit', params: { id: tournamentId } })
           }
+          onDuplicate={() => void overview.duplicate(details)}
+          onSetArchived={(isArchived) => void overview.setArchived(isArchived)}
         />
-        <Button
-          label={t('tournaments.duplicate')}
-          variant="secondary"
-          onPress={() => void overview.duplicate(details)}
-          isDisabled={overview.isBusy}
-        />
-        <Button
-          label={t(details.isArchived ? 'tournaments.restore' : 'tournaments.archive')}
-          variant="secondary"
-          onPress={() => void overview.setArchived(!details.isArchived)}
-          isDisabled={overview.isBusy}
-        />
-        {overview.hasActionFailed && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">
-            {t('common.saveError')}
-          </Text>
-        )}
       </ScrollView>
     </Screen>
   );

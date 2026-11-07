@@ -19,12 +19,12 @@ export function MedalRowCard({ row }: MedalRowCardProps) {
   const t = useT();
 
   return (
-    <View className="gap-1 rounded-lg bg-white p-4 dark:bg-slate-800">
-      <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+    <View className="gap-1 rounded-lg bg-white p-4 dark:bg-stone-800">
+      <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
         {row.clubName ?? t('results.noClub')}
       </Text>
       {/* Written out in words, so that the medals don't depend on color. */}
-      <Text className="text-lg text-slate-900 dark:text-slate-100">
+      <Text className="text-lg text-stone-900 dark:text-stone-100">
         {t('results.medalCounts', { gold: row.gold, silver: row.silver, bronze: row.bronze })}
       </Text>
     </View>

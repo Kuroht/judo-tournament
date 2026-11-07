@@ -45,7 +45,7 @@ export function AddFpjCategoriesScreen({ tournamentId }: AddFpjCategoriesScreenP
   return (
     <Screen>
       <ScrollView contentContainerClassName="gap-2 pb-6">
-        <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+        <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
           {t('categories.chooseSex')}
         </Text>
         <View className="flex-row gap-2">
@@ -65,7 +65,7 @@ export function AddFpjCategoriesScreen({ tournamentId }: AddFpjCategoriesScreenP
             onPress={() => form.setSexChoice('female')}
           />
         </View>
-        <Text className="mt-4 text-lg font-bold text-slate-900 dark:text-slate-100">
+        <Text className="mt-4 text-lg font-bold text-stone-900 dark:text-stone-100">
           {t('categories.chooseAgeClasses')}
         </Text>
         {ageClasses.data.map((ageClass) => {

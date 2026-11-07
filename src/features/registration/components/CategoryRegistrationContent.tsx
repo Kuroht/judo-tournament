@@ -52,10 +52,10 @@ export function CategoryRegistrationContent({
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+        <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
           {title.filter((part) => part !== null).join(' · ')}
         </Text>
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-700 dark:text-stone-200">
           {t('registration.entryCount', { count: registered.length })}
         </Text>
         <FlatList

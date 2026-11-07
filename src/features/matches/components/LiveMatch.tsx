@@ -47,7 +47,7 @@ export function LiveMatch({ data, reload }: LiveMatchProps) {
   };
 
   return (
-    <View className="flex-1 bg-slate-100 dark:bg-slate-900">
+    <View className="flex-1 bg-stone-100 dark:bg-stone-900">
       <ScrollView className="flex-1" contentContainerClassName="gap-3 p-3">
         {match.hasActionFailed && (
           <Text className="text-lg font-semibold text-red-700 dark:text-red-300">

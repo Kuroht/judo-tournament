@@ -65,12 +65,12 @@ export function DrawScreen({ tournamentId }: DrawScreenProps) {
                   params: { id: tournamentId, categoryId: item.categoryId },
                 })
               }
-              className="min-h-16 justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 dark:border-slate-600 dark:bg-slate-800"
+              className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
             >
-              <Text className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+              <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
                 {item.label}
               </Text>
-              <Text className="text-base text-slate-700 dark:text-slate-200">
+              <Text className="text-base text-stone-700 dark:text-stone-200">
                 {parts.filter((part) => part !== null).join(' · ')}
               </Text>
             </Pressable>

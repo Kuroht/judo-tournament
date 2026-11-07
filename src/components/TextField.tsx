@@ -28,11 +28,12 @@ export function TextField({
   autoCapitalize,
   maxLength,
 }: TextFieldProps) {
-  const borderClass = error === undefined ? 'border-slate-400 dark:border-slate-500' : 'border-red-700';
+  const borderClass =
+    error === undefined ? 'border-stone-300 dark:border-stone-600' : 'border-red-700';
 
   return (
     <View className="gap-1">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">{label}</Text>
+      <Text className="text-base font-semibold text-stone-700 dark:text-stone-200">{label}</Text>
       <TextInput
         // Screen readers announce this, because the Text above isn't linked to the input.
         accessibilityLabel={label}
@@ -42,7 +43,7 @@ export function TextField({
         keyboardType={keyboardType}
         autoCapitalize={autoCapitalize}
         maxLength={maxLength}
-        className={`min-h-12 rounded-lg border bg-white px-3 py-2 text-lg text-slate-900 dark:bg-slate-800 dark:text-slate-100 ${borderClass}`}
+        className={`min-h-12 rounded-xl border bg-white px-3 py-2 text-lg text-stone-900 dark:bg-stone-800 dark:text-stone-100 ${borderClass}`}
       />
       {error !== undefined && (
         <Text

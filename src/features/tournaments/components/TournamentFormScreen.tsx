@@ -92,7 +92,11 @@ export function TournamentFormScreen({ tournamentId }: TournamentFormScreenProps
             {t('common.saveError')}
           </Text>
         )}
-        <Button label={t('common.save')} onPress={() => void form.save()} isDisabled={form.isBusy} />
+        <Button
+          label={t('common.save')}
+          onPress={() => void form.save()}
+          isDisabled={form.isBusy}
+        />
       </ScrollView>
     </Screen>
   );

@@ -29,7 +29,7 @@ export function DrawSetup({ entries, isBusy, onToggleSeed, onRunDraw }: DrawSetu
 
   return (
     <View className="flex-1 gap-3">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+      <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
         {t('draw.chooseSeeds')}
       </Text>
       <FlatList

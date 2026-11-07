@@ -23,14 +23,14 @@ export function OsaekomiBar({ athleteName, seconds, score, onEnd }: OsaekomiBarP
   const t = useT();
 
   return (
-    <View className="gap-2 rounded-xl border-4 border-amber-600 bg-white p-4 dark:bg-slate-800">
-      <Text className="text-center text-xl font-bold text-slate-900 dark:text-slate-100">
+    <View className="gap-2 rounded-xl border-4 border-amber-600 bg-white p-4 dark:bg-stone-800">
+      <Text className="text-center text-xl font-bold text-stone-900 dark:text-stone-100">
         {`${t('matches.osaekomi')}: ${athleteName}`}
       </Text>
       <Text className="text-center text-6xl font-bold text-amber-800 dark:text-amber-300">
         {seconds}
       </Text>
-      <Text className="text-center text-xl font-semibold text-slate-900 dark:text-slate-100">
+      <Text className="text-center text-xl font-semibold text-stone-900 dark:text-stone-100">
         {score === null ? t('matches.holdNoScore') : t(`matches.${score}`)}
       </Text>
       <Button label={t('matches.toketa')} onPress={onEnd} />

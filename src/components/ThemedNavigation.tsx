@@ -19,7 +19,9 @@ export function ThemedNavigation() {
   return (
     <ThemeProvider value={isDark ? DARK_NAVIGATION_THEME : LIGHT_NAVIGATION_THEME}>
       {/* A Stack lets edit screens open on top of the tabs, with a back button. */}
-      <Stack>
+      <Stack
+        screenOptions={{ headerTitleStyle: { fontWeight: '700' }, headerShadowVisible: false }}
+      >
         {/* The tabs draw their own header, so this one would be a second header. */}
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
       </Stack>

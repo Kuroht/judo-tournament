@@ -48,12 +48,12 @@ export function ContestRow(props: ContestRowProps) {
       accessibilityState={{ disabled: isWaiting }}
       disabled={isWaiting}
       onPress={onOpen}
-      className={`min-h-14 gap-1 rounded-lg bg-white p-3 dark:bg-slate-800 ${isNext ? 'border-4 border-green-700' : ''} ${isWaiting ? 'opacity-60' : ''}`}
+      className={`min-h-14 gap-1 rounded-lg bg-white p-3 dark:bg-stone-800 ${isNext ? 'border-4 border-green-700' : ''} ${isWaiting ? 'opacity-60' : ''}`}
     >
-      <Text className="text-base text-slate-700 dark:text-slate-200">
+      <Text className="text-base text-stone-700 dark:text-stone-200">
         {details.filter((part) => part !== undefined).join(' · ')}
       </Text>
-      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
         {`${white?.name ?? '—'} x ${blue?.name ?? '—'}`}
       </Text>
     </Pressable>

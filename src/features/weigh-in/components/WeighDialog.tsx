@@ -45,11 +45,11 @@ export function WeighDialog(props: WeighDialogProps) {
         behavior="height"
         className="flex-1 items-center justify-center bg-black/60 p-4"
       >
-        <View className="max-h-full w-full max-w-lg rounded-xl bg-slate-100 p-4 dark:bg-slate-900">
+        <View className="max-h-full w-full max-w-lg rounded-xl bg-stone-100 p-4 dark:bg-stone-900">
           <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-3">
-            <Text className="text-2xl font-bold text-slate-900 dark:text-slate-100">{entry.name}</Text>
-            <Text className="text-lg text-slate-700 dark:text-slate-200">{limitText(entry)}</Text>
-            <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <Text className="text-2xl font-bold text-stone-900 dark:text-stone-100">{entry.name}</Text>
+            <Text className="text-lg text-stone-700 dark:text-stone-200">{limitText(entry)}</Text>
+            <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
               {statusText(entry)}
             </Text>
             <WeightInput

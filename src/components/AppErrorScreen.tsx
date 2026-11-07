@@ -19,11 +19,11 @@ type AppErrorScreenProps = {
 // comes from the database, and the database may be the very thing that failed.
 export function AppErrorScreen({ message, onRetry }: AppErrorScreenProps) {
   return (
-    <View className="flex-1 items-center justify-center gap-4 bg-slate-100 p-6 dark:bg-slate-900">
-      <Text className="text-center text-xl font-bold text-slate-900 dark:text-slate-100">
+    <View className="flex-1 items-center justify-center gap-4 bg-stone-100 p-6 dark:bg-stone-900">
+      <Text className="text-center text-xl font-bold text-stone-900 dark:text-stone-100">
         Ocorreu um erro / Something went wrong
       </Text>
-      <Text className="text-center text-base text-slate-700 dark:text-slate-200">{message}</Text>
+      <Text className="text-center text-base text-stone-700 dark:text-stone-200">{message}</Text>
       <Button label="Tentar novamente / Try again" onPress={onRetry} />
     </View>
   );

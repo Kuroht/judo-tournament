@@ -20,8 +20,7 @@ export type TournamentFormErrors = {
 };
 
 export type TournamentValidation =
-  | { type: 'valid'; data: TournamentData }
-  | { type: 'invalid'; errors: TournamentFormErrors };
+  { type: 'valid'; data: TournamentData } | { type: 'invalid'; errors: TournamentFormErrors };
 
 /**
  * Validates what was typed into the tournament form.
@@ -38,7 +37,9 @@ export function validateTournamentForm(values: TournamentFormValues): Tournament
   const seasonYearText = values.seasonYear.trim();
   const seasonYear = Number(seasonYearText);
   const isSeasonYearValid =
-    /^\d{4}$/.test(seasonYearText) && seasonYear >= MIN_SEASON_YEAR && seasonYear <= MAX_SEASON_YEAR;
+    /^\d{4}$/.test(seasonYearText) &&
+    seasonYear >= MIN_SEASON_YEAR &&
+    seasonYear <= MAX_SEASON_YEAR;
 
   if (name !== '' && date !== null && isSeasonYearValid) {
     return {

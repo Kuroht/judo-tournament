@@ -66,7 +66,7 @@ export function MatchMoreActions(props: MatchMoreActionsProps) {
   return (
     <Modal visible={isVisible} transparent animationType="fade" onRequestClose={onClose}>
       <View className="flex-1 items-center justify-center bg-black/60 p-4">
-        <View className="max-h-full w-full max-w-lg gap-3 rounded-xl bg-white p-4 dark:bg-slate-800">
+        <View className="max-h-full w-full max-w-lg gap-3 rounded-xl bg-white p-4 dark:bg-stone-800">
           <ScrollView contentContainerClassName="gap-2">
             {actions.map((action) => (
               <Button

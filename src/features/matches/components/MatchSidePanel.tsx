@@ -30,7 +30,7 @@ export function MatchSidePanel(props: MatchSidePanelProps) {
   const { side, athlete, score, rules, isInProgress, isHoldRunning, onEvent, onStartHold } = props;
   const t = useT();
   const isOnBlue = side === 'blue';
-  const textClasses = isOnBlue ? 'text-white' : 'text-slate-900';
+  const textClasses = isOnBlue ? 'text-white' : 'text-stone-900';
   const scoreParts = [
     `${t('matches.ippon')} ${score.ippons}`,
     `${t('matches.wazaAri')} ${score.wazaAris}`,
@@ -40,7 +40,7 @@ export function MatchSidePanel(props: MatchSidePanelProps) {
 
   return (
     <View
-      className={`flex-1 gap-3 rounded-xl p-4 ${isOnBlue ? 'bg-judo-blue' : 'border-2 border-slate-400 bg-judo-white'}`}
+      className={`flex-1 gap-3 rounded-xl p-4 ${isOnBlue ? 'bg-judo-blue' : 'border-2 border-stone-400 bg-judo-white'}`}
     >
       {/* The color's name is written too, so the side doesn't depend on color alone. */}
       <Text className={`text-base font-semibold ${textClasses}`}>{t(`matches.side.${side}`)}</Text>

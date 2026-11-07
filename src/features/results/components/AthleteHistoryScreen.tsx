@@ -49,18 +49,18 @@ export function AthleteHistoryScreen({ athleteId }: AthleteHistoryScreenProps) {
         contentContainerClassName="gap-2 flex-grow"
         ListEmptyComponent={<EmptyState message={t('results.noHistory')} />}
         renderItem={({ item }) => (
-          <View className="gap-1 rounded-lg bg-white p-4 dark:bg-slate-800">
-            <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+          <View className="gap-1 rounded-lg bg-white p-4 dark:bg-stone-800">
+            <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
               {item.tournamentName}
             </Text>
-            <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+            <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
               {item.place === null
                 ? item.categoryTitle
                 : `${item.categoryTitle} · ${t('results.place', { place: item.place })}`}
             </Text>
             {/* A few matches at most, so a plain list inside the row is fine. */}
             {item.matches.map((match) => (
-              <Text key={match.key} className="text-base text-slate-700 dark:text-slate-200">
+              <Text key={match.key} className="text-base text-stone-700 dark:text-stone-200">
                 {describeMatch(match)}
               </Text>
             ))}

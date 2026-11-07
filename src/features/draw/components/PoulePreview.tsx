@@ -55,7 +55,7 @@ export function PoulePreview({
         return (
           <View key={String(pouleIndex)} className="gap-2">
             {hasTwoPoules && (
-              <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+              <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
                 {t('draw.poule', { poule: pouleIndex === 0 ? 'A' : 'B' })}
               </Text>
             )}
@@ -67,13 +67,13 @@ export function PoulePreview({
                 onSelect={onSelect}
               />
             ))}
-            <Text className="text-base font-bold text-slate-900 dark:text-slate-100">
+            <Text className="text-base font-bold text-stone-900 dark:text-stone-100">
               {t(members.length === 2 ? 'draw.bestOfThree' : 'draw.matchOrder')}
             </Text>
             {schedule.map(([first, second], index) => (
               <Text
                 key={String(index)}
-                className="text-base text-slate-700 dark:text-slate-200"
+                className="text-base text-stone-700 dark:text-stone-200"
               >
                 {`${index + 1}. ${memberAt(first)?.name ?? ''} x ${memberAt(second)?.name ?? ''}`}
               </Text>
@@ -82,7 +82,7 @@ export function PoulePreview({
         );
       })}
       {hasTwoPoules && (
-        <Text className="text-base text-slate-700 dark:text-slate-200">
+        <Text className="text-base text-stone-700 dark:text-stone-200">
           {t('draw.twoPoulesFinals')}
         </Text>
       )}

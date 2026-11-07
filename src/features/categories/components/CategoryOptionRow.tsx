@@ -23,7 +23,7 @@ type CategoryOptionRowProps = {
 export function CategoryOptionRow({ label, options }: CategoryOptionRowProps) {
   return (
     <View className="gap-1">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">{label}</Text>
+      <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">{label}</Text>
       <View className="flex-row gap-2">
         {options.map((option) => (
           <OptionButton

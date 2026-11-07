@@ -21,7 +21,7 @@ export function YesNoField({ label, value, onChange }: YesNoFieldProps) {
 
   return (
     <View className="gap-1">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">{label}</Text>
+      <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">{label}</Text>
       <View className="flex-row gap-2">
         <OptionButton label={t('settings.yes')} isSelected={value} onPress={() => onChange(true)} />
         <OptionButton

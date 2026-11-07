@@ -60,7 +60,7 @@ export function SelectOptionsModal({
         behavior="height"
         className="flex-1 items-center justify-center bg-black/60 p-4"
       >
-        <View className="max-h-full w-full max-w-lg gap-3 rounded-xl bg-slate-100 p-4 dark:bg-slate-900">
+        <View className="max-h-full w-full max-w-lg gap-3 rounded-xl bg-stone-100 p-4 dark:bg-stone-900">
           <TextField label={searchLabel} value={search} onChangeText={setSearch} />
           <FlatList
             data={visibleOptions}

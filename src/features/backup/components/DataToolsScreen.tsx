@@ -49,7 +49,7 @@ export function DataToolsScreen() {
           onCancel={tools.cancelPreview}
         />
       )}
-      <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+      <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
         {t('backup.importTitle')}
       </Text>
       <Button
@@ -72,7 +72,7 @@ export function DataToolsScreen() {
           onPress={() => void tools.chooseAutomaticBackup(name)}
         />
       ))}
-      <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+      <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
         {t('backup.exportTitle')}
       </Text>
       <Button

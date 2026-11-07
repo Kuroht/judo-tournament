@@ -67,7 +67,7 @@ export function AddAthletesContent({
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-700 dark:text-stone-200">
           {`${category.label} · ${t('registration.entryCount', { count: registered.length })}`}
         </Text>
         <TextField label={t('common.search')} value={search} onChangeText={setSearch} />

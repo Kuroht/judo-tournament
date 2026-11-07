@@ -39,12 +39,12 @@ export function RulePresetsScreen() {
           <Pressable
             accessibilityRole="button"
             onPress={() => router.push({ pathname: '/rule-preset/[id]', params: { id: item.id } })}
-            className="min-h-16 justify-center rounded-lg border border-slate-300 bg-white px-4 py-2 dark:border-slate-600 dark:bg-slate-800"
+            className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
           >
-            <Text className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+            <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
               {item.name}
             </Text>
-            <Text className="text-base text-slate-700 dark:text-slate-200">
+            <Text className="text-base text-stone-700 dark:text-stone-200">
               {t('settings.rulePresetSummary', {
                 seconds: item.matchSeconds,
                 yuko: t(item.isYukoEnabled ? 'settings.yes' : 'settings.no'),

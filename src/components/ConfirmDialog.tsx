@@ -34,9 +34,9 @@ export function ConfirmDialog({
   return (
     <Modal visible={isVisible} transparent animationType="fade" onRequestClose={onCancel}>
       <View className="flex-1 items-center justify-center bg-black/60 p-6">
-        <View className="w-full max-w-lg gap-4 rounded-xl bg-white p-6 dark:bg-slate-800">
-          <Text className="text-2xl font-bold text-slate-900 dark:text-slate-100">{title}</Text>
-          <Text className="text-lg text-slate-700 dark:text-slate-200">{message}</Text>
+        <View className="w-full max-w-lg gap-4 rounded-2xl bg-white p-6 dark:bg-stone-800">
+          <Text className="text-2xl font-bold text-stone-900 dark:text-stone-100">{title}</Text>
+          <Text className="text-lg text-stone-700 dark:text-stone-200">{message}</Text>
           <Button label={cancelLabel} variant="secondary" onPress={onCancel} />
           <Button label={confirmLabel} variant="danger" onPress={onConfirm} />
         </View>

@@ -17,7 +17,7 @@ type MatchButtonProps = {
 };
 
 export function MatchButton({ label, isOnBlue, isDisabled = false, onPress }: MatchButtonProps) {
-  const colorClasses = isOnBlue ? 'bg-white' : 'bg-slate-800';
+  const colorClasses = isOnBlue ? 'bg-white' : 'bg-stone-800';
   const textClasses = isOnBlue ? 'text-judo-blue' : 'text-white';
 
   return (

@@ -34,10 +34,10 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-xl font-bold text-slate-900 dark:text-slate-100">
+        <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
           {title.filter((part) => part !== null).join(' · ')}
         </Text>
-        <Text className="text-base text-slate-700 dark:text-slate-200">
+        <Text className="text-base text-stone-700 dark:text-stone-200">
           {`${t('draw.athleteCount', { count: entries.length })} · ${t(CATEGORY_FORMAT_LABELS[format])}`}
         </Text>
         {data.unweighedCount > 0 && (

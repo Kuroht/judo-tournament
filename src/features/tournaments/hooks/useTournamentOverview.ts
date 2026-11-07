@@ -9,10 +9,17 @@
 import { useSQLiteContext, type SQLiteDatabase } from 'expo-sqlite';
 import { useCallback, useRef, useState } from 'react';
 
+import { listTournamentContests } from '@/features/matches';
 import { useFocusQuery } from '@/hooks/useFocusQuery';
 import { useT } from '@/lib/i18n/useT';
 
-import { duplicateTournament, getTournament, setTournamentArchived } from '../db/tournamentQueries';
+import {
+  duplicateTournament,
+  getDrawCounts,
+  getTournament,
+  setTournamentArchived,
+} from '../db/tournamentQueries';
+import type { TournamentProgress } from '../tournamentSteps';
 import type { Tournament } from '../types';
 
 /**
@@ -34,7 +41,26 @@ export function useTournamentOverview(
   const isActionRunning = useRef(false);
 
   const query = useCallback(
-    (database: SQLiteDatabase) => getTournament(database, tournamentId),
+    async (database: SQLiteDatabase) => {
+      const details = await getTournament(database, tournamentId);
+      if (details === null) {
+        return null;
+      }
+
+      const drawCounts = await getDrawCounts(database, tournamentId);
+      const categories = await listTournamentContests(database, tournamentId);
+      const contests = categories.flatMap((category) => category.contests);
+      const progress: TournamentProgress = {
+        categoryCount: details.categoryCount,
+        entryCount: details.entryCount,
+        weighInDoneCount: details.weighInDoneCount,
+        ...drawCounts,
+        finishedMatchCount: contests.filter((contest) => contest.isFinished).length,
+        totalMatchCount: contests.length,
+      };
+
+      return { details, progress };
+    },
     [tournamentId],
   );
   const tournament = useFocusQuery(query);

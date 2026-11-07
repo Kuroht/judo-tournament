@@ -42,7 +42,7 @@ export function BracketPreview({ entries, selectedEntryId, onSelect }: BracketPr
 
         return (
           <View key={pool} className="gap-2">
-            <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+            <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
               {t('draw.pool', { pool })}
             </Text>
             {pairs
@@ -58,7 +58,7 @@ export function BracketPreview({ entries, selectedEntryId, onSelect }: BracketPr
                     />
                   ))}
                   {pair.length === 1 && (
-                    <Text className="flex-1 text-center text-base text-slate-700 dark:text-slate-200">
+                    <Text className="flex-1 text-center text-base text-stone-700 dark:text-stone-200">
                       {t('draw.bye')}
                     </Text>
                   )}

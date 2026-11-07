@@ -30,12 +30,12 @@ export function RegisteredAthleteRow({
   const club = athlete.clubName ?? t('athletes.noClub');
 
   return (
-    <View className="min-h-16 flex-row items-center gap-3 rounded-lg border border-slate-300 bg-white px-4 py-2 dark:border-slate-600 dark:bg-slate-800">
+    <View className="min-h-16 flex-row items-center gap-3 rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800">
       <View className="flex-1">
-        <Text className="text-xl font-semibold text-slate-900 dark:text-slate-100">
+        <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
           {athlete.name}
         </Text>
-        <Text className="text-base text-slate-700 dark:text-slate-200">
+        <Text className="text-base text-stone-700 dark:text-stone-200">
           {`${club} · ${athlete.birthYear}`}
         </Text>
         <EligibilityWarnings warnings={checkEligibility(athlete, category)} />

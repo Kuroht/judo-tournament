@@ -70,7 +70,7 @@ export function WeighInContent({ data, weighIn }: WeighInContentProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+        <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
           {t('weighIn.progress', { done: doneCount, total: entries.length })}
         </Text>
         <WeighInFilters

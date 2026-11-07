@@ -33,7 +33,7 @@ export function DatabaseSummaryText() {
   }
 
   return (
-    <Text className="text-base text-slate-700 dark:text-slate-200">
+    <Text className="text-base text-stone-700 dark:text-stone-200">
       {`${t('settings.database')}: v${summary.schemaVersion} · ${summary.ageClassCount} ${t('settings.database.ageClasses')} · ${summary.weightCategoryCount} ${t('settings.database.weightCategories')}`}
     </Text>
   );

@@ -47,16 +47,16 @@ export function FinishedMatch({ data, reload }: FinishedMatchProps) {
   return (
     <Screen>
       <View className="gap-4">
-        <Text className="text-3xl font-bold text-slate-900 dark:text-slate-100">
+        <Text className="text-3xl font-bold text-stone-900 dark:text-stone-100">
           {getOutcomeText(state.outcome, white.name, blue.name, t)}
         </Text>
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-700 dark:text-stone-200">
           {scoreLine(white.name, 'white')}
         </Text>
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-700 dark:text-stone-200">
           {scoreLine(blue.name, 'blue')}
         </Text>
-        <Text className="text-lg text-slate-700 dark:text-slate-200">
+        <Text className="text-lg text-stone-700 dark:text-stone-200">
           {t('matches.duration', {
             time: formatClock(getMatchDuration(data, row.clockElapsedSeconds)),
           })}

@@ -61,7 +61,7 @@ export function DrawResult(props: DrawResultProps) {
 
   return (
     <View className="flex-1 gap-3">
-      <Text className="text-lg font-semibold text-slate-900 dark:text-slate-100">
+      <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
         {`${t('draw.seedLabel', { seed })} · ${t(isLocked ? 'draw.isLocked' : 'draw.isDraft')}`}
       </Text>
       {conflicts.map(([first, second]) => (
@@ -70,7 +70,7 @@ export function DrawResult(props: DrawResultProps) {
         </Text>
       ))}
       {!isLocked && (
-        <Text className="text-base text-slate-700 dark:text-slate-200">{t('draw.swapHelp')}</Text>
+        <Text className="text-base text-stone-700 dark:text-stone-200">{t('draw.swapHelp')}</Text>
       )}
       <View className="flex-1">
         {isElimination ? (

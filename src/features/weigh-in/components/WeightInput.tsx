@@ -61,7 +61,7 @@ export function WeightInput({ savedKg, isBusy, onSave }: WeightInputProps) {
         onChangeText={setText}
         keyboardType="decimal-pad"
         maxLength={7}
-        className="min-h-20 rounded-lg border border-slate-400 bg-white text-center text-5xl font-bold text-slate-900 dark:border-slate-500 dark:bg-slate-800 dark:text-slate-100"
+        className="min-h-20 rounded-lg border border-stone-400 bg-white text-center text-5xl font-bold text-stone-900 dark:border-stone-500 dark:bg-stone-800 dark:text-stone-100"
       />
       {isInvalid && (
         <Text className="text-base font-semibold text-red-700 dark:text-red-300">

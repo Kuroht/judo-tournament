@@ -55,14 +55,14 @@ export function SelectField({
 
   return (
     <View className="gap-1">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">{label}</Text>
+      <Text className="text-base font-semibold text-stone-700 dark:text-stone-200">{label}</Text>
       <Pressable
         accessibilityRole="button"
         accessibilityLabel={`${label}: ${selectedLabel}`}
         onPress={() => setIsOpen(true)}
-        className="min-h-12 justify-center rounded-lg border border-slate-400 bg-white px-3 dark:border-slate-500 dark:bg-slate-800"
+        className="min-h-12 justify-center rounded-xl border border-stone-300 bg-white px-3 dark:border-stone-600 dark:bg-stone-800"
       >
-        <Text className="text-lg text-slate-900 dark:text-slate-100">{`${selectedLabel}  ▾`}</Text>
+        <Text className="text-lg text-stone-900 dark:text-stone-100">{`${selectedLabel}  ▾`}</Text>
       </Pressable>
       <SelectOptionsModal
         isVisible={isOpen}

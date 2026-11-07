@@ -67,6 +67,28 @@ export async function getTournament(db: SQLiteDatabase, id: string): Promise<Tou
   return row === null ? null : toTournament(row);
 }
 
+/**
+ * Counts the categories that need a draw, because they have at least two athletes, and
+ * how many of those have a locked one. A category with one athlete has nobody to draw.
+ */
+export async function getDrawCounts(
+  db: SQLiteDatabase,
+  tournamentId: string,
+): Promise<{ drawableCount: number; lockedDrawCount: number }> {
+  const row = await db.getFirstAsync<{ drawableCount: number; lockedDrawCount: number | null }>(
+    `SELECT COUNT(*) AS drawableCount, SUM(draws.isLocked) AS lockedDrawCount
+     FROM categories
+     LEFT JOIN draws ON draws.categoryId = categories.id
+     WHERE categories.tournamentId = ?
+       AND (SELECT COUNT(*) FROM entries
+            WHERE entries.categoryId = categories.id
+              AND entries.status IN ('registered', 'passed')) >= 2`,
+    [tournamentId],
+  );
+
+  return { drawableCount: row?.drawableCount ?? 0, lockedDrawCount: row?.lockedDrawCount ?? 0 };
+}
+
 /** Saves a new tournament. @returns the new tournament's id */
 export async function createTournament(
   db: SQLiteDatabase,

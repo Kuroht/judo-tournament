@@ -19,7 +19,7 @@ export function ThemeSelector() {
 
   return (
     <View className="gap-2">
-      <Text className="text-lg font-bold text-slate-900 dark:text-slate-100">
+      <Text className="text-lg font-bold text-stone-900 dark:text-stone-100">
         {t('settings.theme')}
       </Text>
       <View className="flex-row gap-2">
