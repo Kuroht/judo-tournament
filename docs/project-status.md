@@ -17,8 +17,9 @@ Where the app stands, what is known to be wrong or untested, and which decisions
 | 8 | Bracket generator and draw | Done. The trainer still needs to validate `docs/regras-para-validar.md` |
 | 9 | Poules and ranking | Done |
 | 10 | Match screen | Done |
-| 11 | Match list, bracket progression, correcting results | Next |
-| 12 to 14 | Results through final polish | Not started |
+| 11 | Match list, bracket progression, correcting results | Done |
+| 12 | Results, rankings, medal table | Next |
+| 13 and 14 | Export and import through final polish | Not started |
 
 ## Known issues
 
@@ -70,9 +71,10 @@ The computer's theme is only read when the app opens or the option is chosen. Th
 - Poule tie-breaks follow FPJ Article 47. IJF also uses the fewest shidos, and counts the loser's scores. The trainer is to confirm.
 - Wins by hansoku-make or withdrawal count as 100 points in a poule, which neither regulation states. A decision counts as 0.5, the FPJ's value for hantei. The trainer is to confirm.
 - Changing a category's format removes its draw, because a draw only keeps clubs apart for the format it was made for.
-- **Must fix in step 11:** a poule tie that needs a new contest (FPJ Article 47) has no way to be fought yet. In two poules, this leaves the semifinals waiting forever. It needs athletes equal on wins, points, head-to-head, total time and weight, which is likeliest if the timer is ignored, because every match's time is then the same.
-- A finished match can't be corrected until step 11. Before it's confirmed, undo works.
 - The hold timer runs on its own, and pausing the main clock doesn't pause it, so sono-mama isn't handled.
+- After a correction changes a later contest's athletes, opening that contest sets its old result aside for good, even if another correction brings the same athletes back. The row stays in the database, with an empty `matchKey`.
+- Step 12 must read results through `buildCategoryContests`, because a saved finished row only counts if the same two athletes still meet.
+- Step 12 must also rank poules using their tie contests. `buildPouleContests` already works out the final order, but `buildCategoryContests` doesn't return it yet.
 - Step 12 must apply FPJ Article 44's exception when annulling a withdrawn athlete's poule results, and tell `rankPoule` when all matches have been fought.
 - Separation is by club only. FPJ also separates by association, which the app doesn't store.
 - A manual swap changes the draw, so its code alone no longer reproduces it.

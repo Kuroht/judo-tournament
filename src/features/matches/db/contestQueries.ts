@@ -1,9 +1,10 @@
 /**
  * =====================================================
  * FILE: contestQueries.ts
- * PURPOSE: Reads a category's contests from its draw and
- *          its finished matches.
- * USED BY: useCategoryContests.ts, matchQueries.ts
+ * PURPOSE: Reads contests from each category's draw and
+ *          finished matches.
+ * USED BY: useCategoryContests.ts, useTournamentMatches.ts,
+ *          matchQueries.ts
  * =====================================================
  */
 import type { SQLiteDatabase } from 'expo-sqlite';
@@ -15,10 +16,17 @@ import type { CategoryContests, ContestAthlete, FinishedMatch } from '../types';
 
 type CategoryRow = {
   label: string;
+  sex: string;
   ageClassName: string | null;
   format: CategoryFormat;
   isLocked: number | null;
   drawnEntryCount: number | null;
+};
+
+type RunningRow = {
+  matchKey: string;
+  whiteEntryId: string;
+  blueEntryId: string;
 };
 
 /**
@@ -31,8 +39,8 @@ export async function getCategoryContests(
   categoryId: string,
 ): Promise<CategoryContests | null> {
   const category = await db.getFirstAsync<CategoryRow>(
-    `SELECT categories.label, age_classes.name AS ageClassName, categories.format,
-       draws.isLocked, draws.entryCount AS drawnEntryCount
+    `SELECT categories.label, categories.sex, age_classes.name AS ageClassName,
+       categories.format, draws.isLocked, draws.entryCount AS drawnEntryCount
      FROM categories
      LEFT JOIN age_classes ON age_classes.id = categories.ageClassId
      LEFT JOIN draws ON draws.categoryId = categories.id
@@ -60,21 +68,64 @@ export async function getCategoryContests(
      WHERE categoryId = ? AND status = 'finished' AND matchKey IS NOT NULL`,
     [categoryId],
   );
-  const running = await db.getAllAsync<{ matchKey: string }>(
-    `SELECT matchKey FROM matches
+  const running = await db.getAllAsync<RunningRow>(
+    `SELECT matchKey, whiteEntryId, blueEntryId FROM matches
      WHERE categoryId = ? AND status = 'running' AND matchKey IS NOT NULL`,
     [categoryId],
   );
 
   const isReady = category.isLocked === 1 && athletes.length === category.drawnEntryCount;
+  const contests = isReady ? buildCategoryContests(category.format, athletes, finished) : [];
+  // A running match only counts if these are still its athletes. After a result is
+  // corrected, the later contests can have changed.
+  const runningKeys = contests
+    .filter((contest) =>
+      running.some(
+        (row) =>
+          row.matchKey === contest.key &&
+          row.whiteEntryId === contest.white?.entryId &&
+          row.blueEntryId === contest.blue?.entryId,
+      ),
+    )
+    .map((contest) => contest.key);
 
   return {
     categoryId,
-    label: category.label,
-    ageClassName: category.ageClassName,
+    title: [category.ageClassName, category.label].filter((part) => part !== null).join(' · '),
     format: category.format,
     isReady,
-    runningKeys: running.map((row) => row.matchKey),
-    contests: isReady ? buildCategoryContests(category.format, athletes, finished) : [],
+    runningKeys,
+    athletes,
+    finished,
+    contests,
   };
+}
+
+/**
+ * Reads the contests of every category with a locked draw, youngest age class first.
+ * @param tournamentId the tournament to read
+ * @returns the categories that have contests
+ */
+export async function listTournamentContests(
+  db: SQLiteDatabase,
+  tournamentId: string,
+): Promise<CategoryContests[]> {
+  const rows = await db.getAllAsync<{ id: string }>(
+    `SELECT categories.id FROM categories
+     LEFT JOIN age_classes ON age_classes.id = categories.ageClassId
+     WHERE categories.tournamentId = ?
+     ORDER BY age_classes.sortOrder IS NULL, age_classes.sortOrder, categories.sex,
+       categories.maxKg IS NULL, categories.maxKg, categories.label`,
+    [tournamentId],
+  );
+  const categories: CategoryContests[] = [];
+
+  for (const row of rows) {
+    const category = await getCategoryContests(db, row.id);
+    if (category !== null && category.contests.length > 0) {
+      categories.push(category);
+    }
+  }
+
+  return categories;
 }

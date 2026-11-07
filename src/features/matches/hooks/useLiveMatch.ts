@@ -9,11 +9,10 @@
 import { useEffect, useState } from 'react';
 import { Vibration } from 'react-native';
 
-import { replayMatchEvents } from '@/lib/rules/applyMatchEvent';
 import { getElapsedSeconds } from '@/lib/rules/matchClock';
 import { osaekomiResult } from '@/lib/rules/osaekomi';
 
-import { getDueAction, getHoldSeconds } from '../matchTick';
+import { getDueAction, getHoldSeconds, getMatchState } from '../matchTick';
 import type { MatchData } from '../types';
 import { useMatchActions } from './useMatchActions';
 
@@ -30,10 +29,7 @@ const LONG_VIBRATION_MS = 800;
 export function useLiveMatch(data: MatchData, reload: () => Promise<void>) {
   const { row, rules } = data;
   const [nowMs, setNowMs] = useState(() => Date.now());
-  const state = replayMatchEvents(
-    data.events.map((saved) => saved.event),
-    rules,
-  );
+  const state = getMatchState(data);
   const actions = useMatchActions(data, state, reload);
   const { isActionRunning, addEvent, endHold } = actions;
 

@@ -1,9 +1,8 @@
 /**
  * =====================================================
  * FILE: CategoryContestsScreen.tsx
- * PURPOSE: A category's contests, as the way into the
- *          match screen. The full list for the whole
- *          tournament comes in step 11.
+ * PURPOSE: One category's contests, opened from its draw.
+ *          MatchListScreen.tsx shows the whole tournament.
  * USED BY: src/app/tournament/[id]/category-matches/
  *          [categoryId]/list.tsx
  * =====================================================
@@ -17,6 +16,7 @@ import { Screen } from '@/components/Screen';
 import { useT } from '@/lib/i18n/useT';
 
 import { useCategoryContests } from '../hooks/useCategoryContests';
+import { getContestStatus } from '../matchList';
 import { ContestRow } from './ContestRow';
 
 type CategoryContestsScreenProps = {
@@ -63,7 +63,7 @@ export function CategoryContestsScreen({ tournamentId, categoryId }: CategoryCon
         renderItem={({ item }) => (
           <ContestRow
             contest={item}
-            isRunning={runningKeys.includes(item.key)}
+            status={getContestStatus(item, runningKeys.includes(item.key))}
             onOpen={() =>
               router.push({
                 pathname: '/tournament/[id]/category-matches/[categoryId]/match/[matchKey]',

@@ -2,19 +2,14 @@
  * =====================================================
  * FILE: buildCategoryContests.ts
  * PURPOSE: Lists a category's contests from its draw and
- *          finished matches. A pure function, so it's easy
- *          to test.
- * USED BY: matchQueries.ts
+ *          finished matches. Nothing about the bracket is
+ *          saved: it's worked out from the results each time,
+ *          so that correcting a result can't leave it wrong.
+ * USED BY: contestQueries.ts
  * =====================================================
  */
 import type { CategoryFormat } from '@/features/categories';
-import {
-  getPouleSchedule,
-  isBestOfThreeOver,
-  putSameClubMatchesFirst,
-  splitIntoTwoPoules,
-} from '@/lib/brackets/pouleSchedule';
-import { rankPoule, type PouleResult } from '@/lib/brackets/rankPoule';
+import { splitIntoTwoPoules } from '@/lib/brackets/pouleSchedule';
 import {
   resolveBracket,
   type BracketMatch,
@@ -23,7 +18,12 @@ import {
 } from '@/lib/brackets/resolveBracket';
 import { getTwoPoulesFinals } from '@/lib/brackets/twoPoulesFinals';
 
+import { buildPouleContests, type PouleTools } from './buildPouleContests';
 import type { Contest, ContestAthlete, FinishedMatch } from './types';
+
+// A single poule gives medals to its top three. Two poules send their top two onward.
+const PLACES_NEEDED_IN_ONE_POULE = 3;
+const PLACES_NEEDED_IN_TWO_POULES = 2;
 
 /** Turns finished matches into the results the bracket works from. */
 function toBracketResults(
@@ -63,12 +63,13 @@ export function buildCategoryContests(
   finished: readonly FinishedMatch[],
 ): Contest[] {
   const byPosition = new Map(athletes.map((athlete) => [athlete.position, athlete]));
+  const athleteAt = (position: number) => byPosition.get(position) ?? null;
   const positionOf = (entryId: string) =>
     athletes.find((athlete) => athlete.entryId === entryId)?.position ?? 0;
   const results = toBracketResults(finished, positionOf);
 
   /** A finished match only counts if these same two athletes fought it. */
-  function findFinished(key: string, white: ContestAthlete | null, blue: ContestAthlete | null) {
+  function findFinishedFor(key: string, white: ContestAthlete | null, blue: ContestAthlete | null) {
     const match = finished.find((other) => other.matchKey === key);
     const isSamePair =
       match?.whiteEntryId === white?.entryId && match?.blueEntryId === blue?.entryId;
@@ -82,13 +83,15 @@ export function buildCategoryContests(
     pouleName: Contest['pouleName'],
     white: ContestAthlete | null,
     blue: ContestAthlete | null,
+    isPlayoff: boolean,
   ): Contest {
-    const match = findFinished(key, white, blue);
+    const match = findFinishedFor(key, white, blue);
 
     return {
       key,
       part,
       pouleName,
+      isPlayoff,
       white,
       blue,
       isFinished: match !== undefined,
@@ -97,100 +100,81 @@ export function buildCategoryContests(
   }
 
   function fromBracketMatch(match: BracketMatch): Contest {
-    const white = match.white === null ? null : (byPosition.get(match.white) ?? null);
-    const blue = match.blue === null ? null : (byPosition.get(match.blue) ?? null);
+    const white = match.white === null ? null : athleteAt(match.white);
+    const blue = match.blue === null ? null : athleteAt(match.blue);
 
-    return toContest(match.key, match.part, null, white, blue);
+    return toContest(match.key, match.part, null, white, blue, false);
   }
 
   if (format !== 'poule' && format !== 'twoPoules') {
     return resolveBracket(athletes.length, format, results).map(fromBracketMatch);
   }
 
-  // ---------------------------------------------
-  // SECTION: Poules
-  // ---------------------------------------------
-
-  const positions = athletes.map((athlete) => athlete.position);
-  const poules =
-    format === 'twoPoules'
-      ? (splitIntoTwoPoules(positions).map((members, index) => ({
-          members,
-          name: index === 0 ? 'A' : 'B',
-        })) as { members: number[]; name: 'A' | 'B' | null }[])
-      : [{ members: [...positions].sort((a, b) => a - b), name: null }];
-
-  const contests: Contest[] = [];
-  const topTwo: [number | null, number | null][] = [];
-
-  for (const { members, name } of poules) {
-    const memberAt = (number: number) => byPosition.get(members[number - 1] ?? 0) ?? null;
-    const schedule = putSameClubMatchesFirst(
-      getPouleSchedule(members.length),
-      (number) => memberAt(number)?.clubId ?? null,
-    );
-    const pouleResults: PouleResult[] = [];
-    let isComplete = true;
-    const wins: [number, number] = [0, 0];
-
-    schedule.forEach(([first, second], index) => {
-      // FPJ Article 38.2: a best of three stops as soon as someone has won twice. So
-      // each match is only listed once the one before it has finished.
-      if (members.length === 2 && (isBestOfThreeOver(wins) || !isComplete)) {
-        return;
-      }
-
-      const key = `poule-${name ?? 'A'}-${index + 1}`;
-      const contest = toContest(key, 'poule', name, memberAt(first), memberAt(second));
-      const match = findFinished(key, contest.white, contest.blue);
-      contests.push(contest);
-
-      if (match === undefined) {
-        isComplete = false;
-        return;
-      }
-
-      let winner: PouleResult['winner'] = 'none';
-      if (match.winnerEntryId !== null) {
-        winner = match.winnerEntryId === match.whiteEntryId ? 'white' : 'blue';
-      }
-      if (winner === 'white') {
-        wins[0] += 1;
-      }
-      if (winner === 'blue') {
-        wins[1] += 1;
-      }
-
-      pouleResults.push({
-        white: first,
-        blue: second,
-        winner,
-        resultType: match.resultType,
-        durationSeconds: match.durationSeconds,
-      });
-    });
-
-    if (format === 'twoPoules') {
-      const standings = rankPoule(
-        members.map((_, index) => ({
-          position: index + 1,
-          weighedKg: memberAt(index + 1)?.weighedKg ?? null,
-        })),
-        pouleResults,
-        isComplete,
-      );
-      // A tie that needs a new contest leaves the finalists unknown for now.
-      const isDecided = isComplete && !standings.slice(0, 2).some((other) => other.needsPlayoff);
-      const realPosition = (index: number) =>
-        members[(standings[index]?.position ?? 0) - 1] ?? null;
-      topTwo.push(isDecided ? [realPosition(0), realPosition(1)] : [null, null]);
-    }
+  /** Builds the tools for one poule. A poule is named A or B only if there are two. */
+  function toolsFor(pouleName: Contest['pouleName']): PouleTools {
+    return {
+      athleteAt,
+      makeContest: (key, white, blue, isPlayoff) =>
+        toContest(key, 'poule', pouleName, white, blue, isPlayoff),
+      findFinished: (contest) => findFinishedFor(contest.key, contest.white, contest.blue),
+    };
   }
 
-  if (format === 'twoPoules') {
-    const finals = getTwoPoulesFinals(topTwo[0] ?? [null, null], topTwo[1] ?? [null, null], results);
-    contests.push(...finals.map(fromBracketMatch));
+  const positions = athletes.map((athlete) => athlete.position).sort((a, b) => a - b);
+
+  if (format === 'poule') {
+    return buildPouleContests(
+      positions,
+      'poule-A',
+      false,
+      PLACES_NEEDED_IN_ONE_POULE,
+      toolsFor(null),
+    ).contests;
   }
 
-  return contests;
+  const [membersA, membersB] = splitIntoTwoPoules(positions);
+  const pouleA = buildPouleContests(
+    membersA,
+    'poule-A',
+    false,
+    PLACES_NEEDED_IN_TWO_POULES,
+    toolsFor('A'),
+  );
+  const pouleB = buildPouleContests(
+    membersB,
+    'poule-B',
+    false,
+    PLACES_NEEDED_IN_TWO_POULES,
+    toolsFor('B'),
+  );
+  const finals = getTwoPoulesFinals(
+    [pouleA.order?.[0] ?? null, pouleA.order?.[1] ?? null],
+    [pouleB.order?.[0] ?? null, pouleB.order?.[1] ?? null],
+    results,
+  );
+
+  return [...pouleA.contests, ...pouleB.contests, ...finals.map(fromBracketMatch)];
+}
+
+/**
+ * Counts the finished matches that depend on one match, because removing its result
+ * makes them stop counting. Used to warn before a result is corrected.
+ * @param matchKey the match being corrected
+ * @returns how many other finished matches depend on it
+ */
+export function countDependentMatches(
+  format: CategoryFormat,
+  athletes: readonly ContestAthlete[],
+  finished: readonly FinishedMatch[],
+  matchKey: string,
+): number {
+  const without = finished.filter((match) => match.matchKey !== matchKey);
+  const stillFinished = buildCategoryContests(format, athletes, without)
+    .filter((contest) => contest.isFinished)
+    .map((contest) => contest.key);
+
+  return buildCategoryContests(format, athletes, finished).filter(
+    (contest) =>
+      contest.isFinished && contest.key !== matchKey && !stillFinished.includes(contest.key),
+  ).length;
 }

@@ -3,7 +3,7 @@
  * FILE: rankPoule.ts
  * PURPOSE: Ranks a poule, following FPJ Articles 41, 43,
  *          44 and 47.
- * USED BY: the results screen from step 12
+ * USED BY: buildPouleContests.ts
  * =====================================================
  */
 import type { ResultType } from '@/lib/rules/types';

@@ -7,14 +7,36 @@
  * USED BY: useLiveMatch.ts
  * =====================================================
  */
+import { replayMatchEvents } from '@/lib/rules/applyMatchEvent';
 import { getElapsedSeconds, getPeriodLimit, type MatchClock } from '@/lib/rules/matchClock';
 import { osaekomiResult } from '@/lib/rules/osaekomi';
 import type { MatchEvent, MatchState, RuleSet, Side } from '@/lib/rules/types';
+
+import type { MatchData } from './types';
 
 export type RunningHold = {
   side: Side | null;
   startedAtMs: number | null;
 };
+
+/**
+ * Works out how a saved match stands. A tie's new contest is fought in golden score
+ * from the start (FPJ Article 47.2).
+ */
+export function getMatchState(data: MatchData): MatchState {
+  return replayMatchEvents(
+    data.events.map((saved) => saved.event),
+    data.rules,
+    data.contest.isPlayoff ? 'goldenScore' : 'regular',
+  );
+}
+
+/** Finds how long a match lasted. A tie's new contest has no regular time to count. */
+export function getMatchDuration(data: MatchData, elapsedSeconds: number): number {
+  return data.contest.isPlayoff
+    ? Math.max(0, elapsedSeconds - data.rules.matchSeconds)
+    : elapsedSeconds;
+}
 
 /** Finds how many seconds the current hold has lasted. */
 export function getHoldSeconds(hold: RunningHold, nowMs: number): number {

@@ -35,7 +35,7 @@ export function MatchScreen({ categoryId, matchKey }: MatchScreenProps) {
   }
 
   if (state.data.row.status === 'finished') {
-    return <FinishedMatch data={state.data} />;
+    return <FinishedMatch data={state.data} reload={reload} />;
   }
 
   return <LiveMatch data={state.data} reload={reload} />;

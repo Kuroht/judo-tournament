@@ -22,6 +22,10 @@ Estas são as dúvidas que os regulamentos não resolveram por completo.
 - [ ] **Vencidos nos combates de bronze:** ficam em **5.º lugar**?
 - [ ] **Pontos nas poules:** estamos a contar **só os pontos de quem vence** cada combate (FPJ, Artigo 41). A IJF conta também os pontos de quem perde. Qual devemos usar? Resposta: ______
 - [ ] **Desempate nas poules:** usamos a ordem da FPJ. A IJF tem mais um critério, **menos shidos**, antes do tempo total. Se o empate persistir, a IJF pode atribuir o mesmo lugar, enquanto a FPJ manda fazer um novo combate. Usamos só as regras da FPJ?
+- [ ] **Novo combate depois de um empate (Artigo 47.2):** os atletas empatados repetem os combates entre si, em Golden Score desde o início. Dois atletas empatados fazem só um combate. Se voltarem a empatar, há nova ronda. Está certo?
+- [ ] **Novo combate nos escalões sem Golden Score:** nos mais novos, o novo combate depois de um empate também é em Golden Score, sem limite de tempo, e o treinador pode terminá-lo com uma decisão. Está certo para estes escalões?
+- [ ] **Empates que não decidem nada:** só se faz novo combate se o empate decidir uma medalha (até ao 3.º lugar numa poule, até ao 2.º em duas poules). Os outros ficam ordenados pelo sorteio. Está certo?
+- [ ] **Início do Golden Score:** quando o tempo termina, a aplicação passa sozinha para Golden Score, mas o relógio só arranca quando o treinador toca em Iniciar (no hajime do árbitro). Está certo?
 - [ ] **Empate entre 3 atletas:** se o resultado entre eles só separar um, os outros dois passam ao critério seguinte (tempo). Deve antes contar o combate direto entre esses dois?
 - [ ] **Pontos noutras vitórias:** nenhum regulamento indica os pontos de uma vitória por hansoku-make ou desistência. Estamos a usar **100 pontos**, como na falta de comparência. Para uma decisão, usamos **0,5 pontos**, como o hantei na FPJ. Na IJF, o hantei vale 0. Está certo?
 - [ ] **Separação de atletas:** a FPJ separa por clube e por associação. A aplicação, para já, só **separa por clube**. Chega para os nossos torneios?

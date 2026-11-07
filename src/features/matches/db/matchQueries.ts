@@ -14,6 +14,7 @@ import { buildRuleSet, type AgeClassRules, type BaseRules } from '@/lib/rules/bu
 import type { MatchClock } from '@/lib/rules/matchClock';
 import type { MatchEvent, ResultType, RuleSet, Side, SideScore } from '@/lib/rules/types';
 
+import { countDependentMatches } from '../buildCategoryContests';
 import { fromEventRow, toEventRow, type MatchEventRow } from '../matchEventRows';
 import type { Contest, MatchData, MatchRow, SavedEvent } from '../types';
 import { getCategoryContests } from './contestQueries';
@@ -86,6 +87,7 @@ async function getOrCreateMatchRow(
   contest: Contest,
   whiteEntryId: string,
   blueEntryId: string,
+  rules: RuleSet,
 ): Promise<MatchRow | null> {
   const existing = await db.getFirstAsync<MatchRow>(SELECT_MATCH, [categoryId, contest.key]);
   const isSamePair =
@@ -103,9 +105,19 @@ async function getOrCreateMatchRow(
     // round and slot are required by the first table design. matchKey now identifies
     // the contest, so they aren't used.
     await db.runAsync(
-      `INSERT INTO matches (id, categoryId, round, slot, bracketPart, matchKey, whiteEntryId, blueEntryId)
-       VALUES (?, ?, 0, 0, ?, ?, ?, ?)`,
-      [createId(), categoryId, contest.part, contest.key, whiteEntryId, blueEntryId],
+      `INSERT INTO matches (id, categoryId, round, slot, bracketPart, matchKey, whiteEntryId,
+         blueEntryId, clockElapsedSeconds)
+       VALUES (?, ?, 0, 0, ?, ?, ?, ?, ?)`,
+      [
+        createId(),
+        categoryId,
+        contest.part,
+        contest.key,
+        whiteEntryId,
+        blueEntryId,
+        // A tie's new contest is all golden score, whose clock starts after regular time.
+        contest.isPlayoff ? rules.matchSeconds : 0,
+      ],
     );
   });
 
@@ -135,8 +147,9 @@ export async function getMatchData(
     contest,
     contest.white.entryId,
     contest.blue.entryId,
+    rules,
   );
-  if (row === null) {
+  if (category === null || row === null) {
     return null;
   }
 
@@ -152,7 +165,35 @@ export async function getMatchData(
     }
   }
 
-  return { row, contest, white: contest.white, blue: contest.blue, rules, events };
+  return {
+    row,
+    contest,
+    white: contest.white,
+    blue: contest.blue,
+    rules,
+    events,
+    dependentCount: countDependentMatches(
+      category.format,
+      category.athletes,
+      category.finished,
+      matchKey,
+    ),
+  };
+}
+
+/**
+ * Reopens a finished match to correct it. Its events stay, so the trainer can undo or
+ * change them. Later results aren't touched: they still count if the same athletes end
+ * up meeting. Otherwise those contests have to be fought again, and opening one sets the
+ * old result aside for good, even if a later correction brings the same athletes back.
+ */
+export async function reopenMatch(db: SQLiteDatabase, matchId: string): Promise<void> {
+  await db.runAsync(
+    `UPDATE matches SET status = 'running', winnerEntryId = NULL, resultType = NULL,
+       durationSeconds = NULL
+     WHERE id = ?`,
+    [matchId],
+  );
 }
 
 /**

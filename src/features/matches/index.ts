@@ -7,4 +7,5 @@
  * =====================================================
  */
 export { CategoryContestsScreen } from './components/CategoryContestsScreen';
+export { MatchListScreen } from './components/MatchListScreen';
 export { MatchScreen } from './components/MatchScreen';

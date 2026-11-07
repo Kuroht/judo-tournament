@@ -144,11 +144,11 @@ function applyTimeUp(state: MatchState, rules: RuleSet): MatchState {
 // ---------------------------------------------
 
 /** The state of a match before anything has happened. */
-export function createMatchState(): MatchState {
+export function createMatchState(period: MatchState['period'] = 'regular'): MatchState {
   return {
     white: NO_SCORE,
     blue: NO_SCORE,
-    period: 'regular',
+    period,
     outcome: { type: 'inProgress' },
   };
 }
@@ -206,11 +206,16 @@ export function applyMatchEvent(state: MatchState, event: MatchEvent, rules: Rul
  * except the last, so that an undo can never leave the scores in a wrong state.
  * @param events the match's events, in order
  * @param rules the match's rules
+ * @param startPeriod where the match starts. A tie's new contest starts in golden score.
  * @returns the state after all of them
  */
-export function replayMatchEvents(events: readonly MatchEvent[], rules: RuleSet): MatchState {
+export function replayMatchEvents(
+  events: readonly MatchEvent[],
+  rules: RuleSet,
+  startPeriod: MatchState['period'] = 'regular',
+): MatchState {
   return events.reduce(
     (state, event) => applyMatchEvent(state, event, rules),
-    createMatchState(),
+    createMatchState(startPeriod),
   );
 }

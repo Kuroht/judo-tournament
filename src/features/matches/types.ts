@@ -35,6 +35,8 @@ export type Contest = {
   key: string;
   part: BracketPart | 'poule';
   pouleName: 'A' | 'B' | null;
+  // True for a new contest after a tie, which is fought in golden score from the start.
+  isPlayoff: boolean;
   white: ContestAthlete | null;
   blue: ContestAthlete | null;
   isFinished: boolean;
@@ -43,12 +45,13 @@ export type Contest = {
 
 export type CategoryContests = {
   categoryId: string;
-  label: string;
-  ageClassName: string | null;
+  title: string;
   format: CategoryFormat;
   // False until the draw is locked and still matches its athletes.
   isReady: boolean;
   runningKeys: string[];
+  athletes: ContestAthlete[];
+  finished: FinishedMatch[];
   contests: Contest[];
 };
 
@@ -81,4 +84,6 @@ export type MatchData = {
   blue: ContestAthlete;
   rules: RuleSet;
   events: SavedEvent[];
+  // How many other finished matches depend on this one's result.
+  dependentCount: number;
 };

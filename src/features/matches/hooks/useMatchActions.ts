@@ -20,7 +20,7 @@ import {
   saveHold,
   saveMatchEvent,
 } from '../db/matchQueries';
-import { getClockAfterEvent, getHoldSeconds } from '../matchTick';
+import { getClockAfterEvent, getHoldSeconds, getMatchDuration } from '../matchTick';
 import type { MatchData } from '../types';
 
 /**
@@ -137,7 +137,7 @@ export function useMatchActions(
         isGoldenScore,
         white: state.white,
         blue: state.blue,
-        durationSeconds: getElapsedSeconds(clock, Date.now()),
+        durationSeconds: getMatchDuration(data, getElapsedSeconds(clock, Date.now())),
       }),
     );
   }
