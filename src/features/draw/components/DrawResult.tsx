@@ -10,6 +10,7 @@ import { useState } from 'react';
 import { Text, View } from 'react-native';
 
 import type { CategoryFormat } from '@/features/categories';
+import { Banner } from '@/components/Banner';
 import { findClubConflicts } from '@/lib/brackets/assignDrawPositions';
 import { useT } from '@/lib/i18n/useT';
 
@@ -65,9 +66,10 @@ export function DrawResult(props: DrawResultProps) {
         {`${t('draw.seedLabel', { seed })} · ${t(isLocked ? 'draw.isLocked' : 'draw.isDraft')}`}
       </Text>
       {conflicts.map(([first, second]) => (
-        <Text key={first} className="text-base font-semibold text-amber-800 dark:text-amber-300">
-          {`⚠ ${t('draw.conflict', { first: nameOf(first) ?? '', second: nameOf(second) ?? '' })}`}
-        </Text>
+        <Banner
+          key={first}
+          message={t('draw.conflict', { first: nameOf(first) ?? '', second: nameOf(second) ?? '' })}
+        />
       ))}
       {!isLocked && (
         <Text className="text-base text-stone-700 dark:text-stone-200">{t('draw.swapHelp')}</Text>

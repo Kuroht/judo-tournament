@@ -8,7 +8,7 @@
 import { View } from 'react-native';
 
 import { SelectField, type SelectOption } from '@/components/SelectField';
-import { TextField } from '@/components/TextField';
+import { SearchField } from '@/components/SearchField';
 import { useT } from '@/lib/i18n/useT';
 
 import { ALL_CLUBS, NO_CLUB } from '../filterAthletes';
@@ -36,16 +36,18 @@ export function AthleteFilters({
   ];
 
   return (
-    <View className="gap-3">
-      <TextField label={t('common.search')} value={search} onChangeText={onSearchChange} />
-      <SelectField
-        label={t('athletes.filterByClub')}
-        value={clubFilter}
-        options={options}
-        searchLabel={t('common.search')}
-        closeLabel={t('common.close')}
-        onChange={onClubFilterChange}
-      />
+    <View className="flex-row flex-wrap items-end gap-3">
+      <SearchField label={t('common.search')} value={search} onChangeText={onSearchChange} />
+      <View className="min-w-64 flex-1">
+        <SelectField
+          label={t('athletes.filterByClub')}
+          value={clubFilter}
+          options={options}
+          searchLabel={t('common.search')}
+          closeLabel={t('common.close')}
+          onChange={onClubFilterChange}
+        />
+      </View>
     </View>
   );
 }

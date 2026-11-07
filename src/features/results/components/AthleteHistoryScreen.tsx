@@ -49,7 +49,7 @@ export function AthleteHistoryScreen({ athleteId }: AthleteHistoryScreenProps) {
         contentContainerClassName="gap-2 flex-grow"
         ListEmptyComponent={<EmptyState message={t('results.noHistory')} />}
         renderItem={({ item }) => (
-          <View className="gap-1 rounded-lg bg-white p-4 dark:bg-stone-800">
+          <View className="gap-1 rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-700 dark:bg-stone-800">
             <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
               {item.tournamentName}
             </Text>

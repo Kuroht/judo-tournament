@@ -30,7 +30,7 @@ export function RegisteredAthleteRow({
   const club = athlete.clubName ?? t('athletes.noClub');
 
   return (
-    <View className="min-h-16 flex-row items-center gap-3 rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800">
+    <View className="min-h-16 flex-row items-center gap-3 rounded-xl border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800">
       <View className="flex-1">
         <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
           {athlete.name}
@@ -46,7 +46,7 @@ export function RegisteredAthleteRow({
         accessibilityState={{ disabled: isDisabled }}
         disabled={isDisabled}
         onPress={onRemove}
-        className="min-h-12 justify-center rounded-lg border border-red-700 px-3"
+        className="min-h-12 justify-center rounded-xl border border-red-700 px-3"
       >
         <Text className="text-base font-semibold text-red-700 dark:text-red-300">
           {t('registration.remove')}

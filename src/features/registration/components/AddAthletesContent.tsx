@@ -10,11 +10,12 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
 import { Screen } from '@/components/Screen';
-import { TextField } from '@/components/TextField';
+import { SearchField } from '@/components/SearchField';
 import type { TranslationKey } from '@/lib/i18n/pt';
 import { useT } from '@/lib/i18n/useT';
 
@@ -31,12 +32,7 @@ type AddAthletesContentProps = {
   onAdd: (athleteId: string) => void;
 };
 
-export function AddAthletesContent({
-  data,
-  isBusy,
-  errorKey,
-  onAdd,
-}: AddAthletesContentProps) {
+export function AddAthletesContent({ data, isBusy, errorKey, onAdd }: AddAthletesContentProps) {
   const t = useT();
   const router = useRouter();
   const warningText = useWarningText();
@@ -67,10 +63,12 @@ export function AddAthletesContent({
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-lg text-stone-700 dark:text-stone-200">
+        <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
           {`${category.label} · ${t('registration.entryCount', { count: registered.length })}`}
         </Text>
-        <TextField label={t('common.search')} value={search} onChangeText={setSearch} />
+        <View className="flex-row">
+          <SearchField label={t('common.search')} value={search} onChangeText={setSearch} />
+        </View>
         <FlatList
           className="flex-1"
           data={visibleAthletes}
@@ -91,9 +89,7 @@ export function AddAthletesContent({
             />
           )}
         />
-        {errorKey !== null && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">{t(errorKey)}</Text>
-        )}
+        {errorKey !== null && <Banner tone="error" message={t(errorKey)} />}
         <Button
           label={t('registration.createAthlete')}
           variant="secondary"

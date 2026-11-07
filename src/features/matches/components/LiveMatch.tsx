@@ -1,15 +1,17 @@
 /**
  * =====================================================
  * FILE: LiveMatch.tsx
- * PURPOSE: The screen for a match in progress. The side
- *          panels sit next to each other on a tablet, and
- *          above each other on a phone.
+ * PURPOSE: The screen for a match in progress, laid out like
+ *          a scoreboard. On a tablet, the clock sits between
+ *          the two athletes, so a hold or a result appears in
+ *          the middle and the scoring buttons never move.
  * USED BY: MatchScreen.tsx
  * =====================================================
  */
 import { useKeepAwake } from 'expo-keep-awake';
-import { ScrollView, Text, useWindowDimensions, View } from 'react-native';
+import { ScrollView, useWindowDimensions, View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { useT } from '@/lib/i18n/useT';
 import type { MatchEvent, Side } from '@/lib/rules/types';
 
@@ -21,7 +23,9 @@ import { MatchOutcomePanel } from './MatchOutcomePanel';
 import { MatchSidePanel } from './MatchSidePanel';
 import { OsaekomiBar } from './OsaekomiBar';
 
-const SIDE_BY_SIDE_MIN_WIDTH = 700;
+// Below this, a clock between the athletes would squash their buttons.
+const THREE_COLUMNS_MIN_WIDTH = 1000;
+const TWO_COLUMNS_MIN_WIDTH = 560;
 
 type LiveMatchProps = {
   data: MatchData;
@@ -37,56 +41,77 @@ export function LiveMatch({ data, reload }: LiveMatchProps) {
   const { white, blue, rules } = data;
   const { state, holdSide } = match;
   const isInProgress = state.outcome.type === 'inProgress';
+  const hasThreeColumns = width >= THREE_COLUMNS_MIN_WIDTH;
+  const hasTwoColumns = width >= TWO_COLUMNS_MIN_WIDTH;
   const onEvent = (event: MatchEvent) => void match.addEvent(event);
   const panelProps = {
     rules,
     isInProgress,
     isHoldRunning: holdSide !== null,
+    isInRow: hasTwoColumns || hasThreeColumns,
     onEvent,
     onStartHold: (side: Side) => void match.startHold(side),
   };
 
+  const whitePanel = (
+    <MatchSidePanel side="white" athlete={white} score={state.white} {...panelProps} />
+  );
+  const bluePanel = (
+    <MatchSidePanel side="blue" athlete={blue} score={state.blue} {...panelProps} />
+  );
+  const center = (
+    <View className={hasThreeColumns ? 'w-72 gap-3' : 'gap-3'}>
+      {match.hasActionFailed && <Banner tone="error" message={t('common.saveError')} />}
+      {!isInProgress && (
+        <MatchOutcomePanel
+          outcome={state.outcome}
+          whiteName={white.name}
+          blueName={blue.name}
+          onDecide={(winner) => onEvent({ type: 'decision', winner })}
+          onFinish={() => void match.finish()}
+        />
+      )}
+      <MatchClockBar
+        elapsedSeconds={match.elapsedSeconds}
+        period={state.period}
+        rules={rules}
+        isRunning={match.isClockRunning}
+        isInProgress={isInProgress}
+        onSetRunning={(isRunning) => void match.setClockRunning(isRunning)}
+        onReset={() => void match.resetClock()}
+      />
+      {holdSide !== null && (
+        <OsaekomiBar
+          athleteName={holdSide === 'white' ? white.name : blue.name}
+          seconds={match.holdSeconds}
+          score={match.holdScore}
+          onEnd={() => void match.endHold()}
+        />
+      )}
+    </View>
+  );
+
   return (
     <View className="flex-1 bg-stone-100 dark:bg-stone-900">
-      <ScrollView className="flex-1" contentContainerClassName="gap-3 p-3">
-        {match.hasActionFailed && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">
-            {t('common.saveError')}
-          </Text>
+      <ScrollView className="flex-1" contentContainerClassName="p-3">
+        {hasThreeColumns ? (
+          <View className="flex-row gap-3">
+            {whitePanel}
+            {center}
+            {bluePanel}
+          </View>
+        ) : (
+          <View className="gap-3">
+            {center}
+            <View className={hasTwoColumns ? 'flex-row gap-3' : 'gap-3'}>
+              {whitePanel}
+              {bluePanel}
+            </View>
+          </View>
         )}
-        {!isInProgress && (
-          <MatchOutcomePanel
-            outcome={state.outcome}
-            whiteName={white.name}
-            blueName={blue.name}
-            onDecide={(winner) => onEvent({ type: 'decision', winner })}
-            onFinish={() => void match.finish()}
-          />
-        )}
-        <MatchClockBar
-          elapsedSeconds={match.elapsedSeconds}
-          period={state.period}
-          rules={rules}
-          isRunning={match.isClockRunning}
-          isInProgress={isInProgress}
-          onSetRunning={(isRunning) => void match.setClockRunning(isRunning)}
-          onReset={() => void match.resetClock()}
-        />
-        {holdSide !== null && (
-          <OsaekomiBar
-            athleteName={holdSide === 'white' ? white.name : blue.name}
-            seconds={match.holdSeconds}
-            score={match.holdScore}
-            onEnd={() => void match.endHold()}
-          />
-        )}
-        <View className={width >= SIDE_BY_SIDE_MIN_WIDTH ? 'flex-row gap-3' : 'gap-3'}>
-          <MatchSidePanel side="white" athlete={white} score={state.white} {...panelProps} />
-          <MatchSidePanel side="blue" athlete={blue} score={state.blue} {...panelProps} />
-        </View>
       </ScrollView>
       {/* Outside the scrolling area, so that undo is always on screen. */}
-      <View className="p-3">
+      <View className="p-3 pt-0">
         <MatchFooter
           canUndo={match.canUndo}
           isInProgress={isInProgress}

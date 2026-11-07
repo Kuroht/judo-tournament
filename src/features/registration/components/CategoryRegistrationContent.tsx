@@ -10,6 +10,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { FlatList, Text, View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { ConfirmDialog } from '@/components/ConfirmDialog';
 import { EmptyState } from '@/components/EmptyState';
@@ -52,7 +53,10 @@ export function CategoryRegistrationContent({
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
+        <Text
+          accessibilityRole="header"
+          className="text-2xl font-bold text-stone-900 dark:text-stone-100"
+        >
           {title.filter((part) => part !== null).join(' · ')}
         </Text>
         <Text className="text-lg text-stone-700 dark:text-stone-200">
@@ -73,11 +77,10 @@ export function CategoryRegistrationContent({
             />
           )}
         />
-        {errorKey !== null && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">{t(errorKey)}</Text>
-        )}
+        {errorKey !== null && <Banner tone="error" message={t(errorKey)} />}
         <Button
           label={t('registration.addAthletes')}
+          icon="person-add"
           onPress={() =>
             router.push({
               pathname: '/tournament/[id]/category-registration/[categoryId]/add',

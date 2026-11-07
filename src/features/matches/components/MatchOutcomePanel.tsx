@@ -28,11 +28,11 @@ export function MatchOutcomePanel(props: MatchOutcomePanelProps) {
   const t = useT();
 
   return (
-    <View className="gap-3 rounded-xl border-4 border-green-700 bg-white p-4 dark:bg-stone-800">
+    <View className="gap-3 rounded-2xl border-4 border-accent bg-white p-3 dark:border-accent-light dark:bg-stone-800">
       {/* Announced by screen readers as soon as it appears. */}
       <Text
         accessibilityLiveRegion="polite"
-        className="text-center text-2xl font-bold text-stone-900 dark:text-stone-100"
+        className="text-center text-xl font-bold text-stone-900 dark:text-stone-100"
       >
         {getOutcomeText(outcome, whiteName, blueName, t)}
       </Text>

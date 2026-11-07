@@ -59,25 +59,31 @@ export function PoulePreview({
                 {t('draw.poule', { poule: pouleIndex === 0 ? 'A' : 'B' })}
               </Text>
             )}
-            {members.map((entry) => (
-              <DrawAthleteButton
-                key={entry.entryId}
-                entry={entry}
-                isSelected={entry.entryId === selectedEntryId}
-                onSelect={onSelect}
-              />
-            ))}
-            <Text className="text-base font-bold text-stone-900 dark:text-stone-100">
-              {t(members.length === 2 ? 'draw.bestOfThree' : 'draw.matchOrder')}
-            </Text>
-            {schedule.map(([first, second], index) => (
-              <Text
-                key={String(index)}
-                className="text-base text-stone-700 dark:text-stone-200"
-              >
-                {`${index + 1}. ${memberAt(first)?.name ?? ''} x ${memberAt(second)?.name ?? ''}`}
-              </Text>
-            ))}
+            <View className="flex-row flex-wrap gap-4">
+              <View className="min-w-72 flex-1 gap-2">
+                {members.map((entry) => (
+                  <DrawAthleteButton
+                    key={entry.entryId}
+                    entry={entry}
+                    isSelected={entry.entryId === selectedEntryId}
+                    onSelect={onSelect}
+                  />
+                ))}
+              </View>
+              <View className="min-w-72 flex-1 gap-1">
+                <Text className="text-base font-bold text-stone-900 dark:text-stone-100">
+                  {t(members.length === 2 ? 'draw.bestOfThree' : 'draw.matchOrder')}
+                </Text>
+                {schedule.map(([first, second], index) => (
+                  <Text
+                    key={String(index)}
+                    className="text-base text-stone-700 dark:text-stone-200"
+                  >
+                    {`${index + 1}. ${memberAt(first)?.name ?? ''} x ${memberAt(second)?.name ?? ''}`}
+                  </Text>
+                ))}
+              </View>
+            </View>
           </View>
         );
       })}

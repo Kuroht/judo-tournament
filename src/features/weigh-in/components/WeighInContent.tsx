@@ -7,9 +7,10 @@
  * =====================================================
  */
 import { useState } from 'react';
-import { FlatList, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
+import { ProgressBar } from '@/components/ProgressBar';
 import { Screen } from '@/components/Screen';
 import { useT } from '@/lib/i18n/useT';
 
@@ -70,9 +71,11 @@ export function WeighInContent({ data, weighIn }: WeighInContentProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
-          {t('weighIn.progress', { done: doneCount, total: entries.length })}
-        </Text>
+        <ProgressBar
+          label={t('weighIn.progress', { done: doneCount, total: entries.length })}
+          done={doneCount}
+          total={entries.length}
+        />
         <WeighInFilters
           categories={categories}
           search={search}

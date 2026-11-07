@@ -68,15 +68,21 @@ export async function getTournament(db: SQLiteDatabase, id: string): Promise<Tou
 }
 
 /**
- * Counts the categories that need a draw, because they have at least two athletes, and
- * how many of those have a locked one. A category with one athlete has nobody to draw.
+ * Counts what the next step depends on: the categories that need a draw, because they
+ * have at least two athletes, how many of those have a usable locked draw, and how many
+ * athletes can still be weighed. A locked draw that no longer matches its athletes gives
+ * no matches, so it doesn't count.
  */
 export async function getDrawCounts(
   db: SQLiteDatabase,
   tournamentId: string,
-): Promise<{ drawableCount: number; lockedDrawCount: number }> {
+): Promise<{ drawableCount: number; lockedDrawCount: number; weighInOpenCount: number }> {
   const row = await db.getFirstAsync<{ drawableCount: number; lockedDrawCount: number | null }>(
-    `SELECT COUNT(*) AS drawableCount, SUM(draws.isLocked) AS lockedDrawCount
+    `SELECT COUNT(*) AS drawableCount,
+       SUM(CASE WHEN draws.isLocked = 1 AND draws.entryCount =
+             (SELECT COUNT(*) FROM entries
+              WHERE entries.categoryId = categories.id AND entries.drawPosition IS NOT NULL)
+           THEN 1 ELSE 0 END) AS lockedDrawCount
      FROM categories
      LEFT JOIN draws ON draws.categoryId = categories.id
      WHERE categories.tournamentId = ?
@@ -86,7 +92,21 @@ export async function getDrawCounts(
     [tournamentId],
   );
 
-  return { drawableCount: row?.drawableCount ?? 0, lockedDrawCount: row?.lockedDrawCount ?? 0 };
+  const open = await db.getFirstAsync<{ weighInOpenCount: number }>(
+    `SELECT COUNT(*) AS weighInOpenCount
+     FROM entries
+     JOIN categories ON categories.id = entries.categoryId
+     LEFT JOIN draws ON draws.categoryId = categories.id
+     WHERE categories.tournamentId = ? AND entries.status = 'registered'
+       AND COALESCE(draws.isLocked, 0) = 0`,
+    [tournamentId],
+  );
+
+  return {
+    drawableCount: row?.drawableCount ?? 0,
+    lockedDrawCount: row?.lockedDrawCount ?? 0,
+    weighInOpenCount: open?.weighInOpenCount ?? 0,
+  };
 }
 
 /** Saves a new tournament. @returns the new tournament's id */

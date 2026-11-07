@@ -17,7 +17,7 @@ type ScreenProps = {
 export function Screen({ children }: ScreenProps) {
   return (
     <View className="flex-1 items-center bg-stone-100 dark:bg-stone-900">
-      <View className="w-full max-w-4xl flex-1 p-4">{children}</View>
+      <View className="w-full max-w-5xl flex-1 p-4">{children}</View>
     </View>
   );
 }

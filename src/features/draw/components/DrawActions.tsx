@@ -55,7 +55,12 @@ export function DrawActions({
         </>
       ) : (
         <>
-          <Button label={t('draw.lock')} onPress={() => onSetLocked(true)} isDisabled={isBusy} />
+          <Button
+            label={t('draw.lock')}
+            icon="lock-closed"
+            onPress={() => onSetLocked(true)}
+            isDisabled={isBusy}
+          />
           <View className="flex-row gap-2">
             <View className="flex-1">
               <Button

@@ -5,8 +5,7 @@
  * USED BY: AddAthletesScreen.tsx
  * =====================================================
  */
-import { Pressable, Text } from 'react-native';
-
+import { ListRow } from '@/components/ListRow';
 import { useT } from '@/lib/i18n/useT';
 
 import { checkEligibility } from '../checkEligibility';
@@ -30,20 +29,16 @@ export function AthleteOptionRow({
   const club = athlete.clubName ?? t('athletes.noClub');
 
   return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityState={{ disabled: isDisabled }}
-      disabled={isDisabled}
+    <ListRow
+      title={athlete.name}
+      subtitle={`${club} · ${athlete.birthYear}`}
+      icon="add-circle"
+      iconTone="accent"
+      accessibilityLabel={t('registration.addLabel', { name: athlete.name })}
+      isDisabled={isDisabled}
       onPress={onPress}
-      className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
     >
-      <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
-        {`+ ${athlete.name}`}
-      </Text>
-      <Text className="text-base text-stone-700 dark:text-stone-200">
-        {`${club} · ${athlete.birthYear}`}
-      </Text>
       <EligibilityWarnings warnings={checkEligibility(athlete, category)} />
-    </Pressable>
+    </ListRow>
   );
 }

@@ -63,6 +63,30 @@ export function findNextMatch(items: readonly MatchListItem[]): MatchListItem | 
   );
 }
 
+/** A line in the list: a category's heading, or one of its matches. */
+export type MatchListLine =
+  | { type: 'heading'; id: string; title: string }
+  | { type: 'match'; id: string; item: MatchListItem };
+
+/**
+ * Puts a heading above each category's matches, so names don't repeat on every row.
+ * @param items the matches, already in category order
+ */
+export function addCategoryHeadings(items: readonly MatchListItem[]): MatchListLine[] {
+  const lines: MatchListLine[] = [];
+  let currentCategoryId: string | null = null;
+
+  for (const item of items) {
+    if (item.categoryId !== currentCategoryId) {
+      currentCategoryId = item.categoryId;
+      lines.push({ type: 'heading', id: `heading-${item.categoryId}`, title: item.category.title });
+    }
+    lines.push({ type: 'match', id: item.id, item });
+  }
+
+  return lines;
+}
+
 /** Keeps the matches a filter asks for. */
 export function filterMatchList(
   items: readonly MatchListItem[],

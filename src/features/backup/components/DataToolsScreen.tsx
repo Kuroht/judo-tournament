@@ -7,6 +7,7 @@
  */
 import { FlatList, Text, View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
@@ -33,12 +34,10 @@ export function DataToolsScreen() {
   const header = (
     <View className="gap-3 pb-2">
       {message !== null && (
-        <Text
-          accessibilityLiveRegion="polite"
-          className={`text-lg font-semibold ${message.isError ? 'text-red-700 dark:text-red-300' : 'text-green-800 dark:text-green-300'}`}
-        >
-          {t(message.key, message.values)}
-        </Text>
+        <Banner
+          tone={message.isError ? 'error' : 'success'}
+          message={t(message.key, message.values)}
+        />
       )}
       {preview !== null && (
         <ImportPreviewCard

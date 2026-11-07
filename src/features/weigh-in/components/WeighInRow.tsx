@@ -5,20 +5,29 @@
  * USED BY: WeighInContent.tsx
  * =====================================================
  */
-import { Pressable, Text } from 'react-native';
-
+import type { IconName } from '@/components/AppIcon';
+import { ListRow } from '@/components/ListRow';
+import type { BadgeTone } from '@/components/StatusBadge';
 import { useT } from '@/lib/i18n/useT';
 
 import { useWeighInText } from '../hooks/useWeighInText';
 import type { EntryStatus, WeighInEntry } from '../types';
 
-// Full class names, because Tailwind can't find class names built from pieces.
-const STATUS_CLASSES: Record<EntryStatus, string> = {
-  registered: 'text-stone-700 dark:text-stone-200',
-  passed: 'text-green-800 dark:text-green-300',
-  failed: 'text-red-700 dark:text-red-300',
-  noShow: 'text-amber-800 dark:text-amber-300',
-  withdrawn: 'text-amber-800 dark:text-amber-300',
+// The word in the badge carries the meaning, so that it doesn't depend on color alone.
+const STATUS_TONES: Record<EntryStatus, BadgeTone> = {
+  registered: 'neutral',
+  passed: 'done',
+  failed: 'warning',
+  noShow: 'warning',
+  withdrawn: 'warning',
+};
+
+const STATUS_ICONS: Record<EntryStatus, IconName> = {
+  registered: 'scale-outline',
+  passed: 'checkmark-circle',
+  failed: 'close-circle-outline',
+  noShow: 'remove-circle-outline',
+  withdrawn: 'remove-circle-outline',
 };
 
 type WeighInRowProps = {
@@ -33,18 +42,14 @@ export function WeighInRow({ entry, onPress }: WeighInRowProps) {
   const category = [entry.ageClassName, entry.categoryLabel].filter((part) => part !== null);
 
   return (
-    <Pressable
-      accessibilityRole="button"
+    <ListRow
+      title={entry.name}
+      subtitle={`${category.join(' · ')} · ${club}`}
+      icon={STATUS_ICONS[entry.status]}
+      iconTone={entry.status === 'passed' ? 'done' : 'soft'}
+      badge={statusText(entry)}
+      badgeTone={STATUS_TONES[entry.status]}
       onPress={onPress}
-      className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
-    >
-      <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">{entry.name}</Text>
-      <Text className="text-base text-stone-700 dark:text-stone-200">
-        {`${category.join(' · ')} · ${club}`}
-      </Text>
-      <Text className={`text-lg font-semibold ${STATUS_CLASSES[entry.status]}`}>
-        {statusText(entry)}
-      </Text>
-    </Pressable>
+    />
   );
 }

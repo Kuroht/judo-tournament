@@ -15,10 +15,12 @@ import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { OptionButton } from '@/components/OptionButton';
 import { Screen } from '@/components/Screen';
+import { SectionTitle } from '@/components/SectionTitle';
 import { useT } from '@/lib/i18n/useT';
 
 import { useTournamentMatches } from '../hooks/useTournamentMatches';
 import {
+  addCategoryHeadings,
   filterMatchList,
   findNextMatch,
   type MatchListFilter,
@@ -78,6 +80,7 @@ export function MatchListScreen({ tournamentId }: MatchListScreenProps) {
               white: next.contest.white?.name ?? '',
               blue: next.contest.blue?.name ?? '',
             })}
+            icon="play"
             onPress={() => openMatch(next)}
           />
         )}
@@ -92,19 +95,22 @@ export function MatchListScreen({ tournamentId }: MatchListScreenProps) {
           ))}
         </View>
         <FlatList
-          data={visible}
-          keyExtractor={(item) => item.id}
+          data={addCategoryHeadings(visible)}
+          keyExtractor={(line) => line.id}
           contentContainerClassName="gap-2 flex-grow"
           ListEmptyComponent={<EmptyState message={t('matches.noneInFilter')} />}
-          renderItem={({ item }) => (
-            <ContestRow
-              contest={item.contest}
-              status={item.status}
-              categoryTitle={item.category.title}
-              isNext={item.id === next?.id}
-              onOpen={() => openMatch(item)}
-            />
-          )}
+          renderItem={({ item: line }) =>
+            line.type === 'heading' ? (
+              <SectionTitle title={line.title} />
+            ) : (
+              <ContestRow
+                contest={line.item.contest}
+                status={line.item.status}
+                isNext={line.id === next?.id}
+                onOpen={() => openMatch(line.item)}
+              />
+            )
+          }
         />
       </View>
     </Screen>

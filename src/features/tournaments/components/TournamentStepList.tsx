@@ -7,13 +7,10 @@
  * USED BY: TournamentOverviewScreen.tsx
  * =====================================================
  */
-import { useRouter } from 'expo-router';
 import { View } from 'react-native';
 
 import type { IconName, IconTone } from '@/components/AppIcon';
-import { Button } from '@/components/Button';
 import { ListRow } from '@/components/ListRow';
-import { SectionTitle } from '@/components/SectionTitle';
 import { useT } from '@/lib/i18n/useT';
 
 import {
@@ -24,18 +21,9 @@ import {
 } from '../tournamentSteps';
 
 type TournamentStepListProps = {
-  tournamentId: string;
   progress: TournamentProgress;
+  onOpen: (key: StepKey) => void;
 };
-
-const STEP_ROUTES = {
-  categories: '/tournament/[id]/categories',
-  registration: '/tournament/[id]/registration',
-  weighIn: '/tournament/[id]/weigh-in',
-  draw: '/tournament/[id]/draw',
-  matches: '/tournament/[id]/matches',
-  results: '/tournament/[id]/results',
-} as const;
 
 const STATE_ICONS: Record<StepState, { name: IconName; tone: IconTone }> = {
   done: { name: 'checkmark-circle', tone: 'done' },
@@ -43,15 +31,8 @@ const STATE_ICONS: Record<StepState, { name: IconName; tone: IconTone }> = {
   upcoming: { name: 'ellipse-outline', tone: 'soft' },
 };
 
-export function TournamentStepList({ tournamentId, progress }: TournamentStepListProps) {
+export function TournamentStepList({ progress, onOpen }: TournamentStepListProps) {
   const t = useT();
-  const router = useRouter();
-  const steps = getTournamentSteps(progress);
-  const current = steps.find((step) => step.state === 'current');
-
-  function openStep(key: StepKey) {
-    router.push({ pathname: STEP_ROUTES[key], params: { id: tournamentId } });
-  }
 
   /** Says how far each step has got, in the words that suit it. */
   function summaryOf(key: StepKey): string {
@@ -82,17 +63,7 @@ export function TournamentStepList({ tournamentId, progress }: TournamentStepLis
 
   return (
     <View className="gap-2">
-      {current !== undefined && (
-        <View className="gap-2 pb-2">
-          <Button
-            label={t('steps.continue', { step: t(`steps.title.${current.key}`) })}
-            icon="arrow-forward"
-            onPress={() => openStep(current.key)}
-          />
-          <SectionTitle title={t(`steps.hint.${current.key}`)} />
-        </View>
-      )}
-      {steps.map(({ key, state }) => (
+      {getTournamentSteps(progress).map(({ key, state }) => (
         <ListRow
           key={key}
           title={t(`steps.title.${key}`)}
@@ -102,7 +73,7 @@ export function TournamentStepList({ tournamentId, progress }: TournamentStepLis
           badge={state === 'upcoming' ? undefined : t(`steps.state.${state}`)}
           badgeTone={state === 'done' ? 'done' : 'active'}
           isHighlighted={state === 'current'}
-          onPress={() => openStep(key)}
+          onPress={() => onOpen(key)}
         />
       ))}
     </View>

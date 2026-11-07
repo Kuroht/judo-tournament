@@ -7,11 +7,12 @@
  * =====================================================
  */
 import { useRouter } from 'expo-router';
-import { FlatList, Pressable, Text } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { Screen } from '@/components/Screen';
+import type { BadgeTone } from '@/components/StatusBadge';
+import { TileGroups } from '@/components/TileGroups';
 import type { TranslationKey } from '@/lib/i18n/pt';
 import { useT } from '@/lib/i18n/useT';
 
@@ -22,6 +23,12 @@ const STATE_LABELS: Record<DrawSummary['drawState'], TranslationKey> = {
   none: 'draw.state.none',
   draft: 'draw.state.draft',
   locked: 'draw.state.locked',
+};
+
+const STATE_TONES: Record<DrawSummary['drawState'], BadgeTone> = {
+  none: 'neutral',
+  draft: 'warning',
+  locked: 'done',
 };
 
 type DrawScreenProps = {
@@ -43,39 +50,23 @@ export function DrawScreen({ tournamentId }: DrawScreenProps) {
 
   return (
     <Screen>
-      <FlatList
-        data={summaries.data}
-        keyExtractor={(summary) => summary.categoryId}
-        contentContainerClassName="gap-2 flex-grow"
-        ListEmptyComponent={<EmptyState message={t('registration.noCategories')} />}
-        renderItem={({ item }) => {
-          const parts = [
-            item.ageClassName,
-            t(`categories.sex.${item.sex}`),
-            t('draw.athleteCount', { count: item.entryCount }),
-            t(STATE_LABELS[item.drawState]),
-          ];
-
-          return (
-            <Pressable
-              accessibilityRole="button"
-              onPress={() =>
-                router.push({
-                  pathname: '/tournament/[id]/category-draw/[categoryId]/details',
-                  params: { id: tournamentId, categoryId: item.categoryId },
-                })
-              }
-              className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
-            >
-              <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
-                {item.label}
-              </Text>
-              <Text className="text-base text-stone-700 dark:text-stone-200">
-                {parts.filter((part) => part !== null).join(' · ')}
-              </Text>
-            </Pressable>
-          );
-        }}
+      <TileGroups
+        tiles={summaries.data.map((item) => ({
+          id: item.categoryId,
+          group: [item.ageClassName, t(`categories.sex.${item.sex}`)]
+            .filter((part) => part !== null)
+            .join(' · '),
+          title: item.label,
+          detail: t('draw.athleteCount', { count: item.entryCount }),
+          badge: t(STATE_LABELS[item.drawState]),
+          badgeTone: STATE_TONES[item.drawState],
+          onPress: () =>
+            router.push({
+              pathname: '/tournament/[id]/category-draw/[categoryId]/details',
+              params: { id: tournamentId, categoryId: item.categoryId },
+            }),
+        }))}
+        emptyComponent={<EmptyState message={t('registration.noCategories')} />}
       />
     </Screen>
   );

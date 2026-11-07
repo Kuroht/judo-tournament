@@ -8,12 +8,13 @@
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, Pressable, Text, View } from 'react-native';
+import { View } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { Screen } from '@/components/Screen';
-import { TextField } from '@/components/TextField';
+import { SearchField } from '@/components/SearchField';
+import { TileGroups } from '@/components/TileGroups';
 import { useT } from '@/lib/i18n/useT';
 import { matchesSearch } from '@/lib/text/matchesSearch';
 
@@ -44,7 +45,10 @@ export function RegistrationScreen({ tournamentId }: RegistrationScreenProps) {
           message={t('registration.noCategories')}
           actionLabel={t('registration.goToCategories')}
           onAction={() =>
-            router.replace({ pathname: '/tournament/[id]/categories', params: { id: tournamentId } })
+            router.replace({
+              pathname: '/tournament/[id]/categories',
+              params: { id: tournamentId },
+            })
           }
         />
       </Screen>
@@ -60,38 +64,25 @@ export function RegistrationScreen({ tournamentId }: RegistrationScreenProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <TextField label={t('common.search')} value={search} onChangeText={setSearch} />
-        <FlatList
-          className="flex-1"
-          data={visible}
-          keyExtractor={(summary) => summary.categoryId}
-          keyboardShouldPersistTaps="handled"
-          contentContainerClassName="gap-2"
-          ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
-          renderItem={({ item }) => {
-            const sex = t(`categories.sex.${item.sex}`);
-            const parts = [item.ageClassName, sex].filter((part) => part !== null);
-
-            return (
-              <Pressable
-                accessibilityRole="button"
-                onPress={() =>
-                  router.push({
-                    pathname: '/tournament/[id]/category-registration/[categoryId]/athletes',
-                    params: { id: tournamentId, categoryId: item.categoryId },
-                  })
-                }
-                className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
-              >
-                <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
-                  {item.label}
-                </Text>
-                <Text className="text-base text-stone-700 dark:text-stone-200">
-                  {`${parts.join(' · ')} · ${t('registration.entryCount', { count: item.entryCount })}`}
-                </Text>
-              </Pressable>
-            );
-          }}
+        <View className="flex-row">
+          <SearchField label={t('common.search')} value={search} onChangeText={setSearch} />
+        </View>
+        <TileGroups
+          tiles={visible.map((item) => ({
+            id: item.categoryId,
+            group: [item.ageClassName, t(`categories.sex.${item.sex}`)]
+              .filter((part) => part !== null)
+              .join(' · '),
+            title: item.label,
+            badge: t('registration.entryCount', { count: item.entryCount }),
+            badgeTone: item.entryCount > 0 ? 'done' : 'neutral',
+            onPress: () =>
+              router.push({
+                pathname: '/tournament/[id]/category-registration/[categoryId]/athletes',
+                params: { id: tournamentId, categoryId: item.categoryId },
+              }),
+          }))}
+          emptyComponent={<EmptyState message={t('common.noResults')} />}
         />
       </View>
     </Screen>

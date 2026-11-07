@@ -34,15 +34,16 @@ export function MatchClockBar(props: MatchClockBarProps) {
   const clockText = formatClock(getDisplaySeconds(elapsedSeconds, period, rules));
 
   return (
-    <View className="gap-2 rounded-xl bg-white p-4 dark:bg-stone-800">
+    <View className="gap-2 rounded-2xl bg-stone-800 p-3">
       {isGoldenScore && (
-        <Text className="text-center text-3xl font-bold text-amber-700 dark:text-amber-300">
+        <Text className="text-center text-xl font-bold text-amber-300">
           {t('matches.goldenScore')}
         </Text>
       )}
+      {/* Dark in both themes, like the clock on a real scoreboard. */}
       <Text
         accessibilityLabel={`${t('matches.clockLabel')}: ${clockText}`}
-        className="text-center text-7xl font-bold text-stone-900 dark:text-stone-100"
+        className="text-center text-7xl font-bold text-white"
       >
         {clockText}
       </Text>

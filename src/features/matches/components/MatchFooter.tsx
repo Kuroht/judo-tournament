@@ -34,6 +34,7 @@ export function MatchFooter(props: MatchFooterProps) {
       <View className="flex-1">
         <Button
           label={t('matches.undo')}
+          icon="arrow-undo"
           variant="secondary"
           isDisabled={!canUndo}
           onPress={onUndo}
@@ -42,6 +43,7 @@ export function MatchFooter(props: MatchFooterProps) {
       <View className="flex-1">
         <Button
           label={t('matches.more')}
+          icon="ellipsis-horizontal"
           variant="secondary"
           isDisabled={!isInProgress}
           onPress={() => setIsShowingMore(true)}

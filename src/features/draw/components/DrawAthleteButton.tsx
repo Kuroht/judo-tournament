@@ -28,7 +28,7 @@ export function DrawAthleteButton({ entry, isSelected, onSelect }: DrawAthleteBu
       accessibilityRole="button"
       disabled={onSelect === null}
       onPress={() => onSelect?.(entry)}
-      className={`min-h-12 flex-1 justify-center rounded-lg border px-3 py-1 ${isSelected ? 'border-judo-blue bg-blue-100 dark:bg-blue-950' : 'border-stone-300 bg-white dark:border-stone-600 dark:bg-stone-800'}`}
+      className={`min-h-12 justify-center rounded-xl border px-3 py-1 ${isSelected ? 'border-2 border-accent bg-red-100 dark:bg-red-950' : 'border-stone-300 bg-white dark:border-stone-600 dark:bg-stone-800'}`}
     >
       <Text className="text-lg font-semibold text-stone-900 dark:text-stone-100">
         {`${isSelected ? '✓ ' : ''}${entry.drawPosition}. ${entry.name}${seed}`}

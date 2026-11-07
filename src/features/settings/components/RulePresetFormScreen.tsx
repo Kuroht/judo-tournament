@@ -7,6 +7,7 @@
  */
 import { ScrollView, Text } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { Screen } from '@/components/Screen';
@@ -44,9 +45,7 @@ export function RulePresetFormScreen({ id }: RulePresetFormScreenProps) {
       <ScrollView keyboardShouldPersistTaps="handled" contentContainerClassName="gap-4 pb-6">
         <Text className="text-2xl font-bold text-stone-900 dark:text-stone-100">{form.name}</Text>
         {/* Rules aren't copied into tournaments, so a change reaches all of them. */}
-        <Text className="text-base font-semibold text-amber-800 dark:text-amber-300">
-          {`⚠ ${t('settings.rulePresetWarning')}`}
-        </Text>
+        <Banner message={t('settings.rulePresetWarning')} />
         <TextField
           label={t('settings.matchSeconds')}
           value={values.matchSeconds}
@@ -80,14 +79,7 @@ export function RulePresetFormScreen({ id }: RulePresetFormScreenProps) {
           keyboardType="number-pad"
           error={errors.weightToleranceGrams ? t('settings.toleranceInvalid') : undefined}
         />
-        {form.hasSaveFailed && (
-          <Text
-            accessibilityLiveRegion="polite"
-            className="text-lg font-semibold text-red-700 dark:text-red-300"
-          >
-            {t('common.saveError')}
-          </Text>
-        )}
+        {form.hasSaveFailed && <Banner tone="error" message={t('common.saveError')} />}
         <Button label={t('common.save')} onPress={() => void form.save()} />
       </ScrollView>
     </Screen>

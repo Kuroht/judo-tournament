@@ -8,6 +8,7 @@
  */
 import { Text, View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { Screen } from '@/components/Screen';
 import { CATEGORY_FORMAT_LABELS } from '@/features/categories';
@@ -34,22 +35,19 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
+        <Text
+          accessibilityRole="header"
+          className="text-2xl font-bold text-stone-900 dark:text-stone-100"
+        >
           {title.filter((part) => part !== null).join(' · ')}
         </Text>
         <Text className="text-base text-stone-700 dark:text-stone-200">
           {`${t('draw.athleteCount', { count: entries.length })} · ${t(CATEGORY_FORMAT_LABELS[format])}`}
         </Text>
         {data.unweighedCount > 0 && (
-          <Text className="text-base font-semibold text-amber-800 dark:text-amber-300">
-            {`⚠ ${t('draw.unweighed', { count: data.unweighedCount })}`}
-          </Text>
+          <Banner message={t('draw.unweighed', { count: data.unweighedCount })} />
         )}
-        {seed !== null && !isCurrent && (
-          <Text className="text-base font-semibold text-amber-800 dark:text-amber-300">
-            {`⚠ ${t('draw.outOfDate')}`}
-          </Text>
-        )}
+        {seed !== null && !isCurrent && <Banner message={t('draw.outOfDate')} />}
         {!data.isLocked && suggestion !== format && entries.length >= 2 && (
           <Button
             label={t('draw.useSuggestion', { format: t(CATEGORY_FORMAT_LABELS[suggestion]) })}
@@ -58,11 +56,7 @@ export function CategoryDrawContent({ data, draw }: CategoryDrawContentProps) {
             isDisabled={draw.isBusy}
           />
         )}
-        {draw.hasActionFailed && (
-          <Text className="text-lg font-semibold text-red-700 dark:text-red-300">
-            {t('common.saveError')}
-          </Text>
-        )}
+        {draw.hasActionFailed && <Banner tone="error" message={t('common.saveError')} />}
         <DrawStage data={data} draw={draw} isCurrent={isCurrent} />
       </View>
     </Screen>

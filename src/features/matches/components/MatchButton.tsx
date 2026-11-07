@@ -29,7 +29,7 @@ export function MatchButton({ label, isOnBlue, isDisabled = false, onPress }: Ma
       // min-h-20 is 80 dp, well above the 48 dp minimum, for tapping without looking.
       className={`min-h-20 flex-1 basis-[45%] items-center justify-center rounded-xl px-2 ${colorClasses} ${isDisabled ? 'opacity-40' : ''}`}
     >
-      <Text className={`text-center text-xl font-bold ${textClasses}`}>{label}</Text>
+      <Text className={`text-center text-lg font-bold ${textClasses}`}>{label}</Text>
     </Pressable>
   );
 }

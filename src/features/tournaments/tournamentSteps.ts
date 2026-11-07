@@ -23,6 +23,9 @@ export type TournamentProgress = {
   categoryCount: number;
   entryCount: number;
   weighInDoneCount: number;
+  // Athletes still to weigh whose draw isn't locked. A locked draw refuses any weigh-in
+  // change, so sending the trainer there would lead nowhere.
+  weighInOpenCount: number;
   // Categories with enough athletes to need a draw.
   drawableCount: number;
   lockedDrawCount: number;
@@ -46,12 +49,13 @@ function isStepDone(key: StepKey, progress: TournamentProgress): boolean {
     case 'registration':
       return progress.entryCount > 0;
     case 'weighIn':
-      return progress.entryCount > 0 && progress.weighInDoneCount >= progress.entryCount;
+      return progress.entryCount > 0 && progress.weighInOpenCount === 0;
     case 'draw':
-      return progress.drawableCount > 0 && progress.lockedDrawCount >= progress.drawableCount;
+      // With no category needing a draw, such as one athlete in each, there's nothing to do.
+      return progress.entryCount > 0 && progress.lockedDrawCount >= progress.drawableCount;
     case 'matches':
       return (
-        progress.totalMatchCount > 0 && progress.finishedMatchCount >= progress.totalMatchCount
+        isStepDone('draw', progress) && progress.finishedMatchCount >= progress.totalMatchCount
       );
     case 'results':
       // Results have nothing to complete: they're where a tournament ends up.

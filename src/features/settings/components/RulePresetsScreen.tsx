@@ -6,10 +6,11 @@
  * =====================================================
  */
 import { router } from 'expo-router';
-import { FlatList, Pressable, Text } from 'react-native';
+import { FlatList } from 'react-native';
 
 import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
+import { ListRow } from '@/components/ListRow';
 import { Screen } from '@/components/Screen';
 import { useFocusQuery } from '@/hooks/useFocusQuery';
 import { useT } from '@/lib/i18n/useT';
@@ -36,23 +37,16 @@ export function RulePresetsScreen() {
         contentContainerClassName="gap-2 flex-grow"
         ListEmptyComponent={<EmptyState message={t('settings.noRulePresets')} />}
         renderItem={({ item }) => (
-          <Pressable
-            accessibilityRole="button"
+          <ListRow
+            title={item.name}
+            subtitle={t('settings.rulePresetSummary', {
+              seconds: item.matchSeconds,
+              yuko: t(item.isYukoEnabled ? 'settings.yes' : 'settings.no'),
+              golden: t(item.hasGoldenScore ? 'settings.yes' : 'settings.no'),
+              grams: item.weightToleranceGrams,
+            })}
             onPress={() => router.push({ pathname: '/rule-preset/[id]', params: { id: item.id } })}
-            className="min-h-16 justify-center rounded-lg border border-stone-300 bg-white px-4 py-2 dark:border-stone-600 dark:bg-stone-800"
-          >
-            <Text className="text-xl font-semibold text-stone-900 dark:text-stone-100">
-              {item.name}
-            </Text>
-            <Text className="text-base text-stone-700 dark:text-stone-200">
-              {t('settings.rulePresetSummary', {
-                seconds: item.matchSeconds,
-                yuko: t(item.isYukoEnabled ? 'settings.yes' : 'settings.no'),
-                golden: t(item.hasGoldenScore ? 'settings.yes' : 'settings.no'),
-                grams: item.weightToleranceGrams,
-              })}
-            </Text>
-          </Pressable>
+          />
         )}
       />
     </Screen>

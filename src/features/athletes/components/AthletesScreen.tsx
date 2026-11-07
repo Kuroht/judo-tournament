@@ -54,11 +54,6 @@ export function AthletesScreen() {
   return (
     <Screen>
       <View className="flex-1 gap-3">
-        <Button
-          label={t('athletes.manageClubs')}
-          variant="secondary"
-          onPress={() => router.push('/clubs')}
-        />
         {athletes.data.length === 0 ? (
           <EmptyState
             message={t('athletes.empty')}
@@ -84,13 +79,29 @@ export function AthletesScreen() {
               renderItem={({ item }) => (
                 <AthleteRow
                   athlete={item}
-                  onPress={() => router.push({ pathname: '/athlete/[id]', params: { id: item.id } })}
+                  onPress={() =>
+                    router.push({ pathname: '/athlete/[id]', params: { id: item.id } })
+                  }
                 />
               )}
             />
-            <Button label={t('athletes.add')} onPress={handleAdd} />
           </>
         )}
+        <View className="flex-row gap-2">
+          <View className="flex-1">
+            <Button
+              label={t('athletes.manageClubs')}
+              icon="shield-outline"
+              variant="secondary"
+              onPress={() => router.push('/clubs')}
+            />
+          </View>
+          {athletes.data.length > 0 && (
+            <View className="flex-1">
+              <Button label={t('athletes.add')} icon="person-add" onPress={handleAdd} />
+            </View>
+          )}
+        </View>
       </View>
     </Screen>
   );

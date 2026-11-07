@@ -7,18 +7,20 @@
  */
 import { useRouter } from 'expo-router';
 import { useState } from 'react';
-import { FlatList, View } from 'react-native';
+import { View } from 'react-native';
 
 import { Button } from '@/components/Button';
 import { EmptyState } from '@/components/EmptyState';
 import { FullScreenMessage } from '@/components/FullScreenMessage';
 import { Screen } from '@/components/Screen';
-import { TextField } from '@/components/TextField';
+import { SearchField } from '@/components/SearchField';
+import { TileGroups } from '@/components/TileGroups';
 import { useT } from '@/lib/i18n/useT';
+
+import { CATEGORY_FORMAT_LABELS } from '../categoryFormats';
 
 import { filterCategories } from '../filterCategories';
 import { useCategories } from '../hooks/useCategories';
-import { CategoryRow } from './CategoryRow';
 
 type CategoriesScreenProps = {
   tournamentId: string;
@@ -56,30 +58,33 @@ export function CategoriesScreen({ tournamentId }: CategoriesScreenProps) {
           <EmptyState message={t('categories.empty')} />
         ) : (
           <>
-            <TextField label={t('common.search')} value={search} onChangeText={setSearch} />
-            <FlatList
-              className="flex-1"
-              data={visibleCategories}
-              keyExtractor={(category) => category.id}
-              keyboardShouldPersistTaps="handled"
-              contentContainerClassName="gap-2"
-              ListEmptyComponent={<EmptyState message={t('common.noResults')} />}
-              renderItem={({ item }) => (
-                <CategoryRow
-                  category={item}
-                  onPress={() =>
-                    router.push({
-                      pathname: '/tournament/[id]/category/[categoryId]',
-                      params: { id: tournamentId, categoryId: item.id },
-                    })
-                  }
-                />
-              )}
+            <View className="flex-row">
+              <SearchField label={t('common.search')} value={search} onChangeText={setSearch} />
+            </View>
+            <TileGroups
+              tiles={visibleCategories.map((item) => ({
+                id: item.id,
+                group: [item.ageClassName, t(`categories.sex.${item.sex}`)]
+                  .filter((part) => part !== null)
+                  .join(' · '),
+                title: item.label,
+                detail: t(CATEGORY_FORMAT_LABELS[item.format]),
+                onPress: () =>
+                  router.push({
+                    pathname: '/tournament/[id]/category/[categoryId]',
+                    params: { id: tournamentId, categoryId: item.id },
+                  }),
+              }))}
+              emptyComponent={<EmptyState message={t('common.noResults')} />}
             />
           </>
         )}
-        <Button label={t('categories.addFromFpj')} onPress={handleAddFromFpj} />
-        <Button label={t('categories.addManually')} variant="secondary" onPress={handleAddManually} />
+        <Button label={t('categories.addFromFpj')} icon="add" onPress={handleAddFromFpj} />
+        <Button
+          label={t('categories.addManually')}
+          variant="secondary"
+          onPress={handleAddManually}
+        />
       </View>
     </Screen>
   );

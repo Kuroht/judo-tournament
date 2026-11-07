@@ -6,8 +6,9 @@
  * USED BY: ResultsScreen.tsx
  * =====================================================
  */
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
+import { Banner } from '@/components/Banner';
 import { Button } from '@/components/Button';
 import { useT } from '@/lib/i18n/useT';
 
@@ -23,18 +24,12 @@ export function PrintButtons({ tournamentId }: PrintButtonsProps) {
 
   return (
     <View className="gap-2">
-      {printing.hasFailed && (
-        <Text
-          accessibilityLiveRegion="polite"
-          className="text-lg font-semibold text-red-700 dark:text-red-300"
-        >
-          {t('results.print.failed')}
-        </Text>
-      )}
+      {printing.hasFailed && <Banner tone="error" message={t('results.print.failed')} />}
       <View className="flex-row gap-2">
         <View className="flex-1">
           <Button
             label={t('results.print.results')}
+            icon="print-outline"
             variant="secondary"
             isDisabled={printing.isBusy}
             onPress={() => void printing.printResults()}
@@ -43,6 +38,7 @@ export function PrintButtons({ tournamentId }: PrintButtonsProps) {
         <View className="flex-1">
           <Button
             label={t('results.print.contests')}
+            icon="print-outline"
             variant="secondary"
             isDisabled={printing.isBusy}
             onPress={() => void printing.printContests()}

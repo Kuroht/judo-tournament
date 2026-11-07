@@ -19,7 +19,7 @@ export function MedalRowCard({ row }: MedalRowCardProps) {
   const t = useT();
 
   return (
-    <View className="gap-1 rounded-lg bg-white p-4 dark:bg-stone-800">
+    <View className="gap-1 rounded-2xl border border-stone-200 bg-white p-4 dark:border-stone-700 dark:bg-stone-800">
       <Text className="text-xl font-bold text-stone-900 dark:text-stone-100">
         {row.clubName ?? t('results.noClub')}
       </Text>

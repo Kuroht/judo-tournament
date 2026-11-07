@@ -22,16 +22,20 @@ type ListRowProps = {
   badgeTone?: BadgeTone;
   // Draws attention to the row that matters most, such as the next match.
   isHighlighted?: boolean;
+  // For a row that can't be pressed right now. It's dimmed, and announced as disabled.
+  isDisabled?: boolean;
   isDimmed?: boolean;
   // Without this, the row is only information, so it has no arrow.
   onPress?: () => void;
+  // For when an icon carries meaning, such as "add", that screen readers must hear too.
+  accessibilityLabel?: string;
   // For anything extra under the details.
   children?: ReactNode;
 };
 
 export function ListRow(props: ListRowProps) {
   const { title, subtitle, icon, iconTone = 'soft', badge, badgeTone } = props;
-  const { isHighlighted = false, isDimmed = false, onPress, children } = props;
+  const { isHighlighted = false, isDisabled = false, isDimmed = false, onPress, children } = props;
   const borderClass = isHighlighted
     ? 'border-2 border-accent dark:border-accent-light'
     : 'border border-stone-200 dark:border-stone-700';
@@ -39,10 +43,12 @@ export function ListRow(props: ListRowProps) {
   return (
     <Pressable
       accessibilityRole={onPress === undefined ? undefined : 'button'}
-      disabled={onPress === undefined}
+      accessibilityLabel={props.accessibilityLabel}
+      accessibilityState={{ disabled: isDisabled }}
+      disabled={isDisabled || onPress === undefined}
       onPress={onPress}
       // min-h-16 is 64 dp, comfortably above the 48 dp minimum touch target.
-      className={`min-h-16 flex-row items-center gap-3 rounded-xl bg-white px-4 py-3 dark:bg-stone-800 ${borderClass} ${isDimmed ? 'opacity-60' : ''}`}
+      className={`min-h-16 flex-row items-center gap-3 rounded-xl bg-white px-4 py-3 dark:bg-stone-800 ${borderClass} ${isDimmed || isDisabled ? 'opacity-60' : ''}`}
     >
       {icon !== undefined && <AppIcon name={icon} tone={iconTone} size={26} />}
       <View className="flex-1 gap-1">

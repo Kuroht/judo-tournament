@@ -13,7 +13,7 @@ import type { ComponentProps } from 'react';
 
 export type IconName = ComponentProps<typeof Ionicons>['name'];
 
-export type IconTone = 'ink' | 'soft' | 'accent' | 'done' | 'white';
+export type IconTone = 'ink' | 'soft' | 'accent' | 'done' | 'white' | 'gold' | 'silver' | 'bronze';
 
 type AppIconProps = {
   name: IconName;
@@ -28,6 +28,9 @@ const ICON_COLORS: Record<IconTone, [string, string]> = {
   accent: ['#B3261E', '#F2A79F'],
   done: ['#15803D', '#86EFAC'],
   white: ['#FFFFFF', '#FFFFFF'],
+  gold: ['#B8860B', '#E9C46A'],
+  silver: ['#7D8791', '#C4CCD4'],
+  bronze: ['#A0622D', '#D19A66'],
 };
 
 export function AppIcon({ name, tone = 'ink', size = 22 }: AppIconProps) {

@@ -10,7 +10,7 @@ import type { MatchEvent } from '@/lib/rules/types';
 
 import { buildCategoryContests, countDependentMatches } from '../buildCategoryContests';
 import { fromEventRow, toEventRow } from '../matchEventRows';
-import { buildMatchList, filterMatchList, findNextMatch } from '../matchList';
+import { addCategoryHeadings, buildMatchList, filterMatchList, findNextMatch } from '../matchList';
 import type { CategoryContests, Contest, ContestAthlete, FinishedMatch } from '../types';
 
 function athletes(count: number, clubs: Record<number, string> = {}): ContestAthlete[] {
@@ -387,6 +387,19 @@ describe('the match list', () => {
     const waiting = { ...(contests[0] as Contest), white: null };
 
     expect(findNextMatch(buildMatchList([category([waiting])]))).toBeNull();
+  });
+
+  it('puts one heading above each category', () => {
+    const second = { ...category(contests), categoryId: 'c2', title: 'Seniores' };
+    const lines = addCategoryHeadings(buildMatchList([category(contests), second]));
+    const headings = lines.filter((line) => line.type === 'heading');
+
+    expect(headings.map((line) => line.type === 'heading' && line.title)).toEqual([
+      'Cadetes',
+      'Seniores',
+    ]);
+    expect(lines[0]?.type).toBe('heading');
+    expect(lines).toHaveLength(contests.length * 2 + 2);
   });
 
   it('filters finished and to-do matches', () => {

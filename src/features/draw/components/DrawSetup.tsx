@@ -48,7 +48,12 @@ export function DrawSetup({ entries, isBusy, onToggleSeed, onRunDraw }: DrawSetu
         )}
       />
       <TextField label={t('draw.repeatSeed')} value={typedSeed} onChangeText={setTypedSeed} />
-      <Button label={t('draw.run')} onPress={() => onRunDraw(typedSeed)} isDisabled={isBusy} />
+      <Button
+        label={t('draw.run')}
+        icon="shuffle"
+        onPress={() => onRunDraw(typedSeed)}
+        isDisabled={isBusy}
+      />
     </View>
   );
 }

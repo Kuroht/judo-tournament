@@ -10,7 +10,7 @@ import { View } from 'react-native';
 
 import { OptionButton } from '@/components/OptionButton';
 import { SelectField } from '@/components/SelectField';
-import { TextField } from '@/components/TextField';
+import { SearchField } from '@/components/SearchField';
 import { useT } from '@/lib/i18n/useT';
 
 import type { WeighInCategory } from '../types';
@@ -38,24 +38,28 @@ export function WeighInFilters({
   const t = useT();
 
   return (
-    <>
-      <TextField label={t('common.search')} value={search} onChangeText={onSearchChange} />
-      <SelectField
-        label={t('weighIn.filterByCategory')}
-        value={categoryFilter}
-        options={[
-          { value: ALL_CATEGORIES, label: t('weighIn.allCategories') },
-          ...categories.map((category) => ({
-            value: category.id,
-            label: [category.ageClassName, t(`categories.sex.${category.sex}`), category.label]
-              .filter((part) => part !== null)
-              .join(' · '),
-          })),
-        ]}
-        searchLabel={t('common.search')}
-        closeLabel={t('common.close')}
-        onChange={onCategoryFilterChange}
-      />
+    <View className="gap-3">
+      <View className="flex-row flex-wrap items-end gap-3">
+        <SearchField label={t('common.search')} value={search} onChangeText={onSearchChange} />
+        <View className="min-w-64 flex-1">
+          <SelectField
+            label={t('weighIn.filterByCategory')}
+            value={categoryFilter}
+            options={[
+              { value: ALL_CATEGORIES, label: t('weighIn.allCategories') },
+              ...categories.map((category) => ({
+                value: category.id,
+                label: [category.ageClassName, t(`categories.sex.${category.sex}`), category.label]
+                  .filter((part) => part !== null)
+                  .join(' · '),
+              })),
+            ]}
+            searchLabel={t('common.search')}
+            closeLabel={t('common.close')}
+            onChange={onCategoryFilterChange}
+          />
+        </View>
+      </View>
       <View className="flex-row gap-2">
         <OptionButton
           label={t('weighIn.showAll')}
@@ -68,6 +72,6 @@ export function WeighInFilters({
           onPress={() => onPendingOnlyChange(true)}
         />
       </View>
-    </>
+    </View>
   );
 }

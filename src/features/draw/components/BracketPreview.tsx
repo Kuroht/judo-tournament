@@ -50,12 +50,13 @@ export function BracketPreview({ entries, selectedEntryId, onSelect }: BracketPr
               .map((pair) => (
                 <View key={pair[0]?.entryId} className="flex-row items-center gap-2">
                   {pair.map((entry) => (
-                    <DrawAthleteButton
-                      key={entry.entryId}
-                      entry={entry}
-                      isSelected={entry.entryId === selectedEntryId}
-                      onSelect={onSelect}
-                    />
+                    <View key={entry.entryId} className="flex-1">
+                      <DrawAthleteButton
+                        entry={entry}
+                        isSelected={entry.entryId === selectedEntryId}
+                        onSelect={onSelect}
+                      />
+                    </View>
                   ))}
                   {pair.length === 1 && (
                     <Text className="flex-1 text-center text-base text-stone-700 dark:text-stone-200">

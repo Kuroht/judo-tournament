@@ -14,6 +14,7 @@ import type { MatchEvent, RuleSet, Side, SideScore } from '@/lib/rules/types';
 
 import type { ContestAthlete } from '../types';
 import { MatchButton } from './MatchButton';
+import { MatchScoreTiles } from './MatchScoreTiles';
 
 type MatchSidePanelProps = {
   side: Side;
@@ -22,33 +23,34 @@ type MatchSidePanelProps = {
   rules: RuleSet;
   isInProgress: boolean;
   isHoldRunning: boolean;
+  isInRow: boolean;
   onEvent: (event: MatchEvent) => void;
   onStartHold: (side: Side) => void;
 };
 
 export function MatchSidePanel(props: MatchSidePanelProps) {
-  const { side, athlete, score, rules, isInProgress, isHoldRunning, onEvent, onStartHold } = props;
+  const { side, athlete, score, rules, isInProgress, isHoldRunning, isInRow } = props;
+  const { onEvent, onStartHold } = props;
   const t = useT();
   const isOnBlue = side === 'blue';
   const textClasses = isOnBlue ? 'text-white' : 'text-stone-900';
-  const scoreParts = [
-    `${t('matches.ippon')} ${score.ippons}`,
-    `${t('matches.wazaAri')} ${score.wazaAris}`,
-    ...(rules.isYukoEnabled ? [`${t('matches.yuko')} ${score.yukos}`] : []),
-    `${t('matches.shido')} ${score.shidos}`,
-  ];
 
   return (
     <View
-      className={`flex-1 gap-3 rounded-xl p-4 ${isOnBlue ? 'bg-judo-blue' : 'border-2 border-stone-400 bg-judo-white'}`}
+      // Only flex-1 in a row. In a scrolling column, Android collapses it to no height.
+      className={`${isInRow ? 'flex-1' : ''} gap-3 rounded-2xl p-4 ${isOnBlue ? 'bg-judo-blue' : 'border-2 border-stone-300 bg-judo-white'}`}
     >
-      {/* The color's name is written too, so the side doesn't depend on color alone. */}
-      <Text className={`text-base font-semibold ${textClasses}`}>{t(`matches.side.${side}`)}</Text>
-      <Text className={`text-3xl font-bold ${textClasses}`}>{athlete.name}</Text>
-      {athlete.clubName !== null && (
-        <Text className={`text-lg ${textClasses}`}>{athlete.clubName}</Text>
-      )}
-      <Text className={`text-2xl font-bold ${textClasses}`}>{scoreParts.join('  ·  ')}</Text>
+      <View className="gap-0.5">
+        {/* The color's name is written too, so the side doesn't depend on color alone. */}
+        <Text className={`text-base font-semibold ${textClasses}`}>
+          {t(`matches.side.${side}`)}
+        </Text>
+        <Text className={`text-2xl font-bold ${textClasses}`}>{athlete.name}</Text>
+        {athlete.clubName !== null && (
+          <Text className={`text-base ${textClasses}`}>{athlete.clubName}</Text>
+        )}
+      </View>
+      <MatchScoreTiles score={score} hasYuko={rules.isYukoEnabled} isOnBlue={isOnBlue} />
       <View className="flex-row flex-wrap gap-2">
         <MatchButton
           label={t('matches.ippon')}

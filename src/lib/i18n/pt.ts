@@ -16,7 +16,8 @@ export const pt = {
   'draw.tooFewForTwoPoules': 'São precisos pelo menos 4 atletas para fazer duas poules.',
   'draw.matchOrder': 'Ordem dos combates (primeiro os do mesmo clube)',
   'draw.bestOfThree': 'Melhor de 3 combates: ganha quem vencer 2',
-  'draw.twoPoulesFinals': 'Os 2 primeiros de cada poule passam às meias-finais: 1.º de A contra 2.º de B, e 1.º de B contra 2.º de A. Os vencedores disputam a final, e os vencidos ficam em 3.º lugar.',
+  'draw.twoPoulesFinals':
+    'Os 2 primeiros de cada poule passam às meias-finais: 1.º de A contra 2.º de B, e 1.º de B contra 2.º de A. Os vencedores disputam a final, e os vencidos ficam em 3.º lugar.',
   'draw.unweighed': 'Atletas ainda por pesar, que entram no sorteio: {count}',
   'draw.outOfDate': 'Os atletas mudaram desde o sorteio. É preciso sortear de novo.',
   'draw.useSuggestion': 'Usar o formato sugerido: {format}',
@@ -70,8 +71,13 @@ export const pt = {
   'settings.seasonYearInvalid': 'Escreve um ano entre 2000 e 2100.',
   'settings.rulePresets': 'Regras por escalão',
   'settings.noRulePresets': 'Ainda não há escalões.',
-  'settings.rulePresetSummary': '{seconds} s · Yuko: {yuko} · Golden Score: {golden} · Tolerância: {grams} g',
-  'settings.rulePresetWarning': 'As regras novas valem para os combates ainda não começados, em todos os torneios. Os combates já começados mantêm as suas. A tolerância vale logo para todas as pesagens, e baixá-la pode obrigar a refazer sorteios.',
+  'settings.rulePresetSummary':
+    '{seconds} s · Yuko: {yuko} · Golden Score: {golden} · Tolerância: {grams} g',
+  'settings.rulePresetWarning':
+    'As regras novas valem para os combates ainda não começados, em todos os torneios. Os combates já começados mantêm as suas. A tolerância vale logo para todas as pesagens, e baixá-la pode obrigar a refazer sorteios.',
+  'settings.appearance': 'Aparência',
+  'settings.tournaments': 'Torneios',
+  'settings.data': 'Dados',
   'settings.yes': 'Sim',
   'settings.no': 'Não',
   'settings.matchSeconds': 'Duração do combate (segundos)',
@@ -91,15 +97,19 @@ export const pt = {
   'backup.pickFile': 'Escolher um ficheiro',
   'backup.restoreAutomatic': 'Repor uma cópia automática',
   'backup.restoreFrom': 'Repor a cópia de {date}',
-  'backup.noAutomaticBackup': 'Ainda não há nenhuma cópia automática. Só é criada antes de substituir tudo.',
+  'backup.noAutomaticBackup':
+    'Ainda não há nenhuma cópia automática. Só é criada antes de substituir tudo.',
   'backup.previewTitle': 'Ficheiro de {date}',
   'backup.fileHas': 'Contém {clubs} clubes, {athletes} atletas e {tournaments} torneios.',
-  'backup.mergeExplain': 'Juntar adiciona {clubs} clubes, {athletes} atletas e {tournaments} torneios. O que já existe neste tablet fica como está. {skipped} torneios já existem e são ignorados.',
+  'backup.mergeExplain':
+    'Juntar adiciona {clubs} clubes, {athletes} atletas e {tournaments} torneios. O que já existe neste tablet fica como está. {skipped} torneios já existem e são ignorados.',
   'backup.merge': 'Juntar aos dados deste tablet',
   'backup.replace': 'Substituir tudo',
-  'backup.tournamentMergeOnly': 'Este ficheiro só tem um torneio, por isso não pode substituir tudo.',
+  'backup.tournamentMergeOnly':
+    'Este ficheiro só tem um torneio, por isso não pode substituir tudo.',
   'backup.replaceTitle': 'Substituir tudo?',
-  'backup.replaceMessage': 'Este tablet tem {clubs} clubes, {athletes} atletas, {tournaments} torneios e {matches} combates. Todos são apagados e trocados pelos do ficheiro. Antes disso é guardada uma cópia automática, que podes repor nesta página.',
+  'backup.replaceMessage':
+    'Este tablet tem {clubs} clubes, {athletes} atletas, {tournaments} torneios e {matches} combates. Todos são apagados e trocados pelos do ficheiro. Antes disso é guardada uma cópia automática, que podes repor nesta página.',
   'backup.mergeDone': 'Dados juntados com sucesso.',
   'backup.replaceDone': 'Dados substituídos com sucesso. A cópia automática foi guardada.',
   'backup.exportFailed': 'Não foi possível exportar. {details}',
@@ -107,7 +117,8 @@ export const pt = {
   'backup.importFailed': 'Não foi possível importar, e nada foi alterado. {details}',
   'backup.problem.notJson': 'Este ficheiro não é uma cópia de dados válida: não é JSON.',
   'backup.problem.wrongApp': 'Este ficheiro não é uma cópia de dados desta aplicação.',
-  'backup.problem.newerVersion': 'Este ficheiro foi criado por uma versão mais recente da aplicação. Atualiza a aplicação primeiro.',
+  'backup.problem.newerVersion':
+    'Este ficheiro foi criado por uma versão mais recente da aplicação. Atualiza a aplicação primeiro.',
   'backup.problem.tooOld': 'Este ficheiro é de uma versão antiga que já não pode ser lida.',
   'backup.problem.damaged': 'Este ficheiro está danificado. Problema em: {details}',
   'results.title': 'Resultados',
@@ -118,7 +129,8 @@ export const pt = {
   'results.noClub': 'Sem clube',
   'results.medalCounts': 'Ouro: {gold} · Prata: {silver} · Bronze: {bronze}',
   'results.noMedals': 'As medalhas aparecem aqui quando uma categoria terminar.',
-  'results.noCategories': 'Ainda não há resultados. Bloqueia o sorteio de uma categoria e faz os combates.',
+  'results.noCategories':
+    'Ainda não há resultados. Bloqueia o sorteio de uma categoria e faz os combates.',
   'results.history': 'Histórico do atleta',
   'results.noHistory': 'Este atleta ainda não fez nenhum combate.',
   'results.won': 'Ganhou a {name}',
@@ -126,7 +138,8 @@ export const pt = {
   'matches.playoff': 'Desempate em Golden Score',
   'matches.next': 'Próximo',
   'matches.openNext': 'Abrir o próximo combate: {white} x {blue}',
-  'matches.noContests': 'Ainda não há combates. Bloqueia o sorteio de uma categoria para os começar.',
+  'matches.noContests':
+    'Ainda não há combates. Bloqueia o sorteio de uma categoria para os começar.',
   'matches.noneInFilter': 'Não há combates nesta lista.',
   'matches.filter.toDo': 'Por fazer',
   'matches.filter.running': 'A decorrer',
@@ -134,8 +147,10 @@ export const pt = {
   'matches.filter.all': 'Todos',
   'matches.reopen': 'Corrigir o resultado',
   'matches.reopenTitle': 'Corrigir este resultado?',
-  'matches.reopenMessage': 'O combate volta a abrir, com as ações já feitas, até o confirmares outra vez.',
-  'matches.reopenWithDependents': 'O combate volta a abrir, com as ações já feitas. Há {count} combates terminados que dependem dele: ficam suspensos até o confirmares. Se os atletas desses combates mudarem, os resultados deixam de contar e têm de ser repetidos.',
+  'matches.reopenMessage':
+    'O combate volta a abrir, com as ações já feitas, até o confirmares outra vez.',
+  'matches.reopenWithDependents':
+    'O combate volta a abrir, com as ações já feitas. Há {count} combates terminados que dependem dele: ficam suspensos até o confirmares. Se os atletas desses combates mudarem, os resultados deixam de contar e têm de ser repetidos.',
   'matches.matchTitle': 'Combate',
   'matches.drawNotReady': 'Bloqueia o sorteio desta categoria para poderes começar os combates.',
   'matches.status.waiting': 'À espera dos atletas',
@@ -193,7 +208,8 @@ export const pt = {
   'draw.redraw': 'Sortear de novo',
   'draw.changeSeeds': 'Mudar cabeças de série',
   'draw.unlockTitle': 'Desbloquear o sorteio?',
-  'draw.unlockMessage': 'O sorteio poderá voltar a ser alterado. Os treinadores podem já o ter visto, e alterá-lo faz perder os resultados dos combates afetados.',
+  'draw.unlockMessage':
+    'O sorteio poderá voltar a ser alterado. Os treinadores podem já o ter visto, e alterá-lo faz perder os resultados dos combates afetados.',
   'draw.lockedMessage': 'O sorteio desta categoria está bloqueado. Desbloqueia-o primeiro.',
   'common.loading': 'A carregar…',
   'common.loadError': 'Não foi possível carregar os dados',
@@ -289,7 +305,8 @@ export const pt = {
   'athletes.sexRequired': 'Escolhe o sexo do atleta.',
   'athletes.deleteTitle': 'Apagar atleta?',
   'athletes.deleteMessage': 'O atleta {name} será apagado. Isto não pode ser desfeito.',
-  'athletes.deleteBlocked': 'Categorias onde este atleta está inscrito: {count}. Remove-o primeiro.',
+  'athletes.deleteBlocked':
+    'Categorias onde este atleta está inscrito: {count}. Remove-o primeiro.',
   'registration.title': 'Inscrições',
   'registration.noCategories': 'Este torneio ainda não tem categorias. Adiciona-as primeiro.',
   'registration.goToCategories': 'Ir para categorias',
@@ -298,10 +315,12 @@ export const pt = {
   'registration.noEntries': 'Ainda não há atletas inscritos nesta categoria.',
   'registration.createAthlete': 'Criar novo atleta',
   'registration.noAthletes': 'Não há mais atletas para inscrever. Cria um novo atleta.',
+  'registration.addLabel': 'Inscrever {name}',
   'registration.remove': 'Remover',
   'registration.removeLabel': 'Remover {name}',
   'registration.removeTitle': 'Remover inscrição?',
-  'registration.removeMessage': 'A inscrição de {name} nesta categoria será removida. O atleta continua na lista de atletas.',
+  'registration.removeMessage':
+    'A inscrição de {name} nesta categoria será removida. O atleta continua na lista de atletas.',
   'registration.mismatchTitle': 'Inscrever mesmo assim?',
   'registration.mismatchConfirm': 'Inscrever mesmo assim',
   'registration.warning.sex': 'O sexo não corresponde a esta categoria',
