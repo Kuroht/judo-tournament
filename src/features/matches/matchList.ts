@@ -50,17 +50,83 @@ export function buildMatchList(categories: readonly CategoryContests[]): MatchLi
   );
 }
 
+/** The two athletes of the match that finished last, who need a rest. */
+export type LastPair = readonly string[];
+
+function isInPair(item: MatchListItem, pair: LastPair): boolean {
+  const { white, blue } = item.contest;
+
+  return pair.includes(white?.entryId ?? '') || pair.includes(blue?.entryId ?? '');
+}
+
 /**
- * Finds the match to fight next: the first that is ready. A match already running comes
- * first, because it has to end before another begins.
+ * Finds the match to fight next. A match already running comes first, because it has to
+ * end before another begins. Otherwise each category's own next match is a candidate,
+ * so that a category's order is never broken (FPJ Article 40). The first candidate whose
+ * athletes didn't just fight is chosen, so nobody fights twice in a row when another
+ * category has a match ready.
+ * @param items the matches, in category order
+ * @param lastPair the athletes of the match that finished last
  * @returns the match, or null if none is ready
  */
-export function findNextMatch(items: readonly MatchListItem[]): MatchListItem | null {
-  return (
-    items.find((item) => item.status === 'running') ??
-    items.find((item) => item.status === 'pending') ??
-    null
-  );
+export function findNextMatch(
+  items: readonly MatchListItem[],
+  lastPair: LastPair = [],
+): MatchListItem | null {
+  const running = items.find((item) => item.status === 'running');
+  if (running !== undefined) {
+    return running;
+  }
+
+  const candidates: MatchListItem[] = [];
+  for (const item of items) {
+    const isFirstOfItsCategory = !candidates.some(
+      (candidate) => candidate.categoryId === item.categoryId,
+    );
+    const isNotFinished = item.status === 'pending' || item.status === 'waiting';
+    // A category's first unfinished match blocks the rest of it, even while it waits.
+    if (isNotFinished && isFirstOfItsCategory) {
+      candidates.push(item);
+    }
+  }
+
+  const ready = candidates.filter((item) => item.status === 'pending');
+
+  return ready.find((item) => !isInPair(item, lastPair)) ?? ready[0] ?? null;
+}
+
+/**
+ * Plans the next few matches, as if each one is fought in turn.
+ * @param items the matches, in category order
+ * @param lastPair the athletes of the match that finished last
+ * @param count how many to plan
+ * @param skipId a match to leave out, such as the one being fought now
+ */
+export function planUpcomingMatches(
+  items: readonly MatchListItem[],
+  lastPair: LastPair,
+  count: number,
+  skipId: string | null = null,
+): MatchListItem[] {
+  const planned: MatchListItem[] = [];
+  let remaining = items.filter((item) => item.id !== skipId);
+  let pair = lastPair;
+
+  for (let index = 0; index < count; index += 1) {
+    const next = findNextMatch(remaining, pair);
+    if (next === null) {
+      break;
+    }
+
+    planned.push(next);
+    pair = [next.contest.white?.entryId ?? '', next.contest.blue?.entryId ?? ''];
+    // Planned matches count as fought, so the next in that category becomes a candidate.
+    remaining = remaining
+      .filter((item) => item.id !== next.id)
+      .map((item) => (item.status === 'running' ? { ...item, status: 'pending' } : item));
+  }
+
+  return planned;
 }
 
 /** A line in the list: a category's heading, or one of its matches. */

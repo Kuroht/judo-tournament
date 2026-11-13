@@ -10,7 +10,13 @@ import type { MatchEvent } from '@/lib/rules/types';
 
 import { buildCategoryContests, countDependentMatches } from '../buildCategoryContests';
 import { fromEventRow, toEventRow } from '../matchEventRows';
-import { addCategoryHeadings, buildMatchList, filterMatchList, findNextMatch } from '../matchList';
+import {
+  addCategoryHeadings,
+  buildMatchList,
+  filterMatchList,
+  findNextMatch,
+  planUpcomingMatches,
+} from '../matchList';
 import type { CategoryContests, Contest, ContestAthlete, FinishedMatch } from '../types';
 
 function athletes(count: number, clubs: Record<number, string> = {}): ContestAthlete[] {
@@ -387,6 +393,58 @@ describe('the match list', () => {
     const waiting = { ...(contests[0] as Contest), white: null };
 
     expect(findNextMatch(buildMatchList([category([waiting])]))).toBeNull();
+  });
+
+  describe('rest between matches', () => {
+    // Two categories of three. Each poule's order is 1 v 2, 2 v 3, 1 v 3.
+    const first = category(contests);
+    const secondAthletes = athletes(3).map((athlete) => ({
+      ...athlete,
+      entryId: `x${athlete.position}`,
+    }));
+    const second = {
+      ...category(buildCategoryContests('poule', secondAthletes, [])),
+      categoryId: 'c2',
+      title: 'Seniores',
+    };
+    const items = buildMatchList([first, second]);
+    const pairOf = (item: { contest: Contest } | null) => [
+      item?.contest.white?.entryId,
+      item?.contest.blue?.entryId,
+    ];
+
+    it('starts with the first category', () => {
+      expect(pairOf(findNextMatch(items))).toEqual(['e1', 'e2']);
+    });
+
+    it('moves to another category so that nobody fights twice in a row', () => {
+      expect(findNextMatch(items, ['e1', 'e2'])?.categoryId).toBe('c2');
+    });
+
+    it('never breaks the order within a category', () => {
+      // The second match of category 1 (2 v 3) is skipped only for another category,
+      // never for the third match (1 v 3) of the same category.
+      const planned = planUpcomingMatches(items, [], 4);
+
+      expect(planned.map((item) => [item.categoryId, item.contest.key])).toEqual([
+        ['c1', contests[0]?.key],
+        ['c2', second.contests[0]?.key],
+        ['c1', contests[1]?.key],
+        ['c2', second.contests[1]?.key],
+      ]);
+    });
+
+    it('lets an athlete fight again when there is nothing else', () => {
+      const onlyOne = buildMatchList([first]);
+
+      expect(findNextMatch(onlyOne, ['e1', 'e2'])?.contest.key).toBe(contests[0]?.key);
+    });
+
+    it('leaves out the match being fought now', () => {
+      const planned = planUpcomingMatches(items, [], 2, items[0]?.id ?? null);
+
+      expect(planned.map((item) => item.id)).not.toContain(items[0]?.id);
+    });
   });
 
   it('puts one heading above each category', () => {

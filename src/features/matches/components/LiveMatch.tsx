@@ -9,19 +9,17 @@
  * =====================================================
  */
 import { useKeepAwake } from 'expo-keep-awake';
+import { useLocalSearchParams } from 'expo-router';
 import { ScrollView, useWindowDimensions, View } from 'react-native';
 
-import { Banner } from '@/components/Banner';
-import { useT } from '@/lib/i18n/useT';
 import type { MatchEvent, Side } from '@/lib/rules/types';
 
 import { useLiveMatch } from '../hooks/useLiveMatch';
 import type { MatchData } from '../types';
-import { MatchClockBar } from './MatchClockBar';
+import { MatchCenterColumn } from './MatchCenterColumn';
 import { MatchFooter } from './MatchFooter';
-import { MatchOutcomePanel } from './MatchOutcomePanel';
 import { MatchSidePanel } from './MatchSidePanel';
-import { OsaekomiBar } from './OsaekomiBar';
+import { UpcomingMatches } from './UpcomingMatches';
 
 // Below this, a clock between the athletes would squash their buttons.
 const THREE_COLUMNS_MIN_WIDTH = 1000;
@@ -35,7 +33,7 @@ type LiveMatchProps = {
 export function LiveMatch({ data, reload }: LiveMatchProps) {
   // The tablet must not go to sleep while the trainer watches the mat.
   useKeepAwake();
-  const t = useT();
+  const { id, categoryId } = useLocalSearchParams<{ id: string; categoryId: string }>();
   const match = useLiveMatch(data, reload);
   const { width } = useWindowDimensions();
   const { white, blue, rules } = data;
@@ -60,35 +58,12 @@ export function LiveMatch({ data, reload }: LiveMatchProps) {
     <MatchSidePanel side="blue" athlete={blue} score={state.blue} {...panelProps} />
   );
   const center = (
-    <View className={hasThreeColumns ? 'w-72 gap-3' : 'gap-3'}>
-      {match.hasActionFailed && <Banner tone="error" message={t('common.saveError')} />}
-      {!isInProgress && (
-        <MatchOutcomePanel
-          outcome={state.outcome}
-          whiteName={white.name}
-          blueName={blue.name}
-          onDecide={(winner) => onEvent({ type: 'decision', winner })}
-          onFinish={() => void match.finish()}
-        />
-      )}
-      <MatchClockBar
-        elapsedSeconds={match.elapsedSeconds}
-        period={state.period}
-        rules={rules}
-        isRunning={match.isClockRunning}
-        isInProgress={isInProgress}
-        onSetRunning={(isRunning) => void match.setClockRunning(isRunning)}
-        onReset={() => void match.resetClock()}
-      />
-      {holdSide !== null && (
-        <OsaekomiBar
-          athleteName={holdSide === 'white' ? white.name : blue.name}
-          seconds={match.holdSeconds}
-          score={match.holdScore}
-          onEnd={() => void match.endHold()}
-        />
-      )}
-    </View>
+    <MatchCenterColumn
+      data={data}
+      match={match}
+      isBetweenAthletes={hasThreeColumns}
+      onEvent={onEvent}
+    />
   );
 
   return (
@@ -109,6 +84,13 @@ export function LiveMatch({ data, reload }: LiveMatchProps) {
             </View>
           </View>
         )}
+        <View className="pt-3">
+          <UpcomingMatches
+            tournamentId={id}
+            currentId={`${categoryId}:${data.contest.key}`}
+            currentPair={[data.row.whiteEntryId, data.row.blueEntryId]}
+          />
+        </View>
       </ScrollView>
       {/* Outside the scrolling area, so that undo is always on screen. */}
       <View className="p-3 pt-0">

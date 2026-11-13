@@ -17,6 +17,7 @@ import { getOutcomeText } from '../getOutcomeText';
 import { getMatchDuration, getMatchState } from '../matchTick';
 import type { MatchData } from '../types';
 import { MatchScoreTiles } from './MatchScoreTiles';
+import { NextMatchButton } from './NextMatchButton';
 import { ReopenMatchButton } from './ReopenMatchButton';
 
 type FinishedMatchProps = {
@@ -67,7 +68,17 @@ export function FinishedMatch({ data, reload }: FinishedMatchProps) {
             <MatchScoreTiles score={state.blue} hasYuko={rules.isYukoEnabled} isOnBlue />
           </View>
         </View>
-        <Button label={t('matches.backToList')} icon="arrow-back" onPress={handleBack} />
+        <NextMatchButton
+          tournamentId={id}
+          currentId={`${categoryId}:${data.contest.key}`}
+          currentPair={[row.whiteEntryId, row.blueEntryId]}
+        />
+        <Button
+          label={t('matches.backToList')}
+          icon="arrow-back"
+          variant="secondary"
+          onPress={handleBack}
+        />
         <ReopenMatchButton matchId={row.id} dependentCount={data.dependentCount} reload={reload} />
       </ScrollView>
     </Screen>

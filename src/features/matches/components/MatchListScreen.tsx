@@ -47,8 +47,9 @@ export function MatchListScreen({ tournamentId }: MatchListScreenProps) {
     return <FullScreenMessage title={t('common.loadError')} details={matches.message} />;
   }
 
-  const next = findNextMatch(matches.data);
-  const visible = filterMatchList(matches.data, filter);
+  const { items, lastPair } = matches.data;
+  const next = findNextMatch(items, lastPair);
+  const visible = filterMatchList(items, filter);
 
   function openMatch(item: MatchListItem) {
     router.push({
@@ -57,7 +58,7 @@ export function MatchListScreen({ tournamentId }: MatchListScreenProps) {
     });
   }
 
-  if (matches.data.length === 0) {
+  if (items.length === 0) {
     return (
       <Screen>
         <EmptyState

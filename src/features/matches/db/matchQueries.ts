@@ -304,12 +304,14 @@ export async function finishMatch(
   const { white, blue } = result;
 
   await db.runAsync(
-    `UPDATE matches SET status = 'finished', winnerEntryId = ?, resultType = ?, isGoldenScore = ?,
+    `UPDATE matches SET status = 'finished', finishedAtMs = ?, winnerEntryId = ?, resultType = ?,
+       isGoldenScore = ?,
        whiteIppons = ?, whiteWazaAris = ?, whiteYukos = ?, whiteShidos = ?,
        blueIppons = ?, blueWazaAris = ?, blueYukos = ?, blueShidos = ?,
        durationSeconds = ?, clockStartedAtMs = NULL, osaekomiSide = NULL, osaekomiStartedAtMs = NULL
      WHERE id = ?`,
     [
+      Date.now(),
       result.winnerEntryId,
       result.resultType,
       result.isGoldenScore ? 1 : 0,

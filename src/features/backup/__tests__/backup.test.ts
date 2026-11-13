@@ -206,6 +206,17 @@ describe('upgrading a real older backup', () => {
     expect(check.type === 'valid' && check.backup.data.matches[0]?.rulesJson).toBeNull();
     expect(check.type === 'valid' && check.backup.schemaVersion).toBe(6);
   });
+
+  it('reads a version 5 file into version 7, adding each missing column', () => {
+    const data = twoTournaments();
+    data.matches = data.matches.map(
+      ({ rulesJson: _rulesJson, finishedAtMs: _finishedAtMs, ...match }) => match,
+    );
+    const check = validateBackup(fileWith({ schemaVersion: 5 }, data), 7);
+
+    expect(check.type === 'valid' && check.backup.data.matches[0]?.finishedAtMs).toBeNull();
+    expect(check.type === 'valid' && check.backup.schemaVersion).toBe(7);
+  });
 });
 
 describe('migrateBackup', () => {

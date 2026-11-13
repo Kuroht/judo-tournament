@@ -137,6 +137,8 @@ export const pt = {
   'results.lost': 'Perdeu com {name}',
   'matches.playoff': 'Desempate em Golden Score',
   'matches.next': 'Próximo',
+  'matches.nextMatch': 'Próximo combate: {white} x {blue}',
+  'matches.upNext': 'A seguir',
   'matches.openNext': 'Abrir o próximo combate: {white} x {blue}',
   'matches.noContests':
     'Ainda não há combates. Bloqueia o sorteio de uma categoria para os começar.',

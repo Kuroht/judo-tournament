@@ -105,6 +105,28 @@ export async function getCategoryContests(
 }
 
 /**
+ * Finds the two athletes of the match that finished last, who need a rest.
+ * @returns their entry ids, or none if no match has finished yet
+ */
+export async function getLastFinishedPair(
+  db: SQLiteDatabase,
+  tournamentId: string,
+): Promise<string[]> {
+  const row = await db.getFirstAsync<{ whiteEntryId: string; blueEntryId: string }>(
+    `SELECT matches.whiteEntryId, matches.blueEntryId
+     FROM matches
+     JOIN categories ON categories.id = matches.categoryId
+     WHERE categories.tournamentId = ? AND matches.status = 'finished'
+       AND matches.finishedAtMs IS NOT NULL
+     ORDER BY matches.finishedAtMs DESC
+     LIMIT 1`,
+    [tournamentId],
+  );
+
+  return row === null ? [] : [row.whiteEntryId, row.blueEntryId];
+}
+
+/**
  * Reads the contests of every category with a locked draw, youngest age class first.
  * @param tournamentId the tournament to read
  * @returns the categories that have contests

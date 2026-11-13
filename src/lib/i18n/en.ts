@@ -139,6 +139,8 @@ export const en: Record<TranslationKey, string> = {
   'results.lost': 'Lost to {name}',
   'matches.playoff': 'Tie-break in golden score',
   'matches.next': 'Next',
+  'matches.nextMatch': 'Next match: {white} x {blue}',
+  'matches.upNext': 'Up next',
   'matches.openNext': 'Open the next match: {white} x {blue}',
   'matches.noContests': "No matches yet. Lock a category's draw to start them.",
   'matches.noneInFilter': 'No matches in this list.',
